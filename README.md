@@ -2,7 +2,7 @@
 
 This is the repo for the paper [SciMMIR： Benchmarking Scientific Multi-modal Information Retrieval]().
 
-![Framework](./imgs/Framework.png =200x200)
+![Framework](./imgs/Framework.png=200x200)
 
 In this paper, we propose a novel SciMMIR benchmark and a corresponding dataset designed to address the gap in evaluating multi-modal information retrieval (MMIR) models in the scientific domain.
 
