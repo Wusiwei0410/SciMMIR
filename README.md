@@ -11,7 +11,7 @@ In this paper, we propose a novel SciMMIR benchmark and a corresponding dataset 
 It is worth mentioning that we define a data hierarchical architecture of "Two subsets, Five subcategories" and use human-created keywords to classify the data (as shown in the table below).
 
 <div align="center">
-<img src=./imgs/data_architecture.png width=40% />
+<img src=./imgs/data_architecture.png width=50% />
 </div>
 
 As shown in the table below, we conducted extensive baselines (both fine-tuning and zero-shot) within various subsets and subcategories.
