@@ -3,14 +3,14 @@
 This is the repo for the paper [SciMMIR： Benchmarking Scientific Multi-modal Information Retrieval]().
 
 ```text
-![Framework](./imgs/Framework.png =50x50)
+![Framework](./imgs/Framework.png)
 ```
 
 In this paper, we propose a novel SciMMIR benchmark and a corresponding dataset designed to address the gap in evaluating multi-modal information retrieval (MMIR) models in the scientific domain.
 
 It is worth mentioning that we define a data hierarchical architecture of "Two subsets, Five subcategories" and use human-created keywords to classify the data (as shown in the table below).
 
-![Data architecture](./imgs/data_architecture.png =50x50)
+![Data architecture](./imgs/data_architecture.png)
 
 As shown in the table below, we conducted extensive baselines (both fine-tuning and zero-shot) within various subsets and subcategories.
 
