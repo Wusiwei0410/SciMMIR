@@ -31,8 +31,37 @@ import datasets
 ds_remote = datasets.load_dataset("m-a-p/SciMMIR")
 test_data = ds_remote['test']
 caption = test_data[0]['text']
-image = test_data[0]['image']
 image_type = test_data[0]['class']
+image = test_data[0]['image']
 ```
 
 We will release the codes soon...
+
+## Citation
+
+```
+@misc{wu2024scimmir,
+  author       = {Wu, Siwei and
+                  LI, Yizhi and
+                  Zhu, Kang and
+                  Zhang, Ge and
+                  Liang, Yiming and
+                  Ma, Kaijing and
+                  Xiao, Chenghao and
+                  Zhang, Haoran and
+                  Yang, Bohao and
+                  Chen, Wenhu and
+                  Huang, Wenhao and
+                  Moubayed, Noura Al and
+                  Fu, Jie and
+                  Lin, Chenghua},
+  title        = {{SciMMIR: Benchmarking Scientific Multi-modal 
+                   Information Retrieval}},
+  month        = jan,
+  year         = 2024,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.10521030},
+  url          = {https://doi.org/10.5281/zenodo.10521030}
+}
+```
+
