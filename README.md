@@ -37,11 +37,75 @@ image = test_data[0]['image']
 
 ## Fine-Tuning Model on SciMMIR Dataset
 
+### Processing data
+
 First, we need to get the subcategories information about our dataset by runing the following code:
 
+```python
+python classify_training_data.py
+```
 
+Then we need to processe the test and valid data:
 
+```python
+python processor_text.py --model_name  CLIP
+python processor_text.py --model_name  BERT
+python processor_text.py --model_name  BLIP
+python processor_figs.py --model_name  CLIP
+python processor_figs.py --model_name  BERT
+```
 
+All the processed data would be saved in './data/' folder.
+
+### Training model
+
+You can use following codes to get fine-tuned CLIP-base model:
+
+```
+ python train_main.py --training_data_len 498279
+```
+
+You can use following codes to get fine-tuned CLIP+BERT model:
+
+```
+ python train_main.py --training_data_len 498279 --Use_BERT 1 --train_batch_size 200
+```
+
+You can use following codes to  get fine-tuned BLIP-base model:
+
+```
+python train_main.py --training_data_len 498279 --model_name BLIP --train_batch_size 110 --context_length 128 --image_size 384
+```
+
+You can use following codes to  get fine-tuned BLIP-BERT model:
+
+```
+python train_main.py --training_data_len 498279 --model_name BLIP --train_batch_size 110 --context_length 128 --image_size 384 --Use_BERT 1
+```
+
+### Using  the subcategories training data
+
+If you want to fine-tuning the model on the subcategories training data, you need to change some parameters. As for CLIP-base, you can using following codes to train model on fig_architecture data:
+
+```
+python train_main.py --image_type fig_architecture --training_data_len 13135  > CLIP_fig_architecture_log.txt 
+```
+
+As for BLIP-base,  you can using following codes to train model on fig_architecture data:
+
+```
+python train_main.py --model_name BLIP --train_batch_size 110 --context_length 128 --image_size 384 --image_type fig_architecture --training_data_len 13135
+```
+
+So, if you want to  change the training data, you just  need to change the --image_type and corresponding --training_data_len.
+
+## Potential TODOs before ACL
+
+**TODO**: case study table
+
+**TODO**: statistics of the paper fields (perhaps in appendix)
+
+**TODO**: See if it's possible to further divide the "Figure Results" subsets.
 
 ## Citation
 
