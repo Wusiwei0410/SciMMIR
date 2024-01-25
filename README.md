@@ -20,7 +20,7 @@ As shown in the table below, we conducted extensive baselines (both fine-tuning 
 
 For more detailed experimental results and analysis, please refer to our paper [SciMMIR](https://zenodo.org/records/10521030/files/SciMMIR__Benchmarking_Scientific_Multimodal_Information_Retrieval.pdf?download=1).
 
-## Dataset & Codes
+## Dataset
 
 Our SciMMIR benchmark dataset used in this paper contains 537K scientific image-text pairs which are extracted from the latest 6 months' papers in Arxiv (2023.05 to 2023.10), and we will continue to expand this data by extracting data from more papers in Arxiv and provide larger versions of the dataset.
 
@@ -35,7 +35,13 @@ image_type = test_data[0]['class']
 image = test_data[0]['image']
 ```
 
-We will release the codes soon...
+## Fine-Tuning Model on SciMMIR Dataset
+
+First, we need to get the subcategories information about our dataset by runing the following code:
+
+
+
+
 
 ## Citation
 
