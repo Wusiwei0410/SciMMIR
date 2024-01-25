@@ -135,27 +135,12 @@ You can just use the code of Large VLMs Zero-Shot Experiments. Firstly, you need
 
 ```
 @misc{wu2024scimmir,
-  author       = {Wu, Siwei and
-                  LI, Yizhi and
-                  Zhu, Kang and
-                  Zhang, Ge and
-                  Liang, Yiming and
-                  Ma, Kaijing and
-                  Xiao, Chenghao and
-                  Zhang, Haoran and
-                  Yang, Bohao and
-                  Chen, Wenhu and
-                  Huang, Wenhao and
-                  Moubayed, Noura Al and
-                  Fu, Jie and
-                  Lin, Chenghua},
-  title        = {{SciMMIR: Benchmarking Scientific Multi-modal 
-                   Information Retrieval}},
-  month        = jan,
-  year         = 2024,
-  publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.10521030},
-  url          = {https://doi.org/10.5281/zenodo.10521030}
+      title={SciMMIR: Benchmarking Scientific Multi-modal Information Retrieval}, 
+      author={Siwei Wu and Yizhi Li and Kang Zhu and Ge Zhang and Yiming Liang and Kaijing Ma and Chenghao Xiao and Haoran Zhang and Bohao Yang and Wenhu Chen and Wenhao Huang and Noura Al Moubayed and Jie Fu and Chenghua Lin},
+      year={2024},
+      eprint={2401.13478},
+      archivePrefix={arXiv},
+      primaryClass={cs.IR}
 }
 ```
 
