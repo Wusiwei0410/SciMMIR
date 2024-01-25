@@ -1,6 +1,6 @@
 ## SciMMIR
 
-This is the repo for the paper [SciMMIR： Benchmarking Scientific Multi-modal Information Retrieval](https://zenodo.org/records/10521030/files/SciMMIR__Benchmarking_Scientific_Multimodal_Information_Retrieval.pdf?download=1).
+This is the repo for the paper [SciMMIR： Benchmarking Scientific Multi-modal Information Retrieval](https://arxiv.org/abs/2401.13478).
 
 <div align="center">
 <img src=./imgs/Framework.png width=80% />
@@ -18,7 +18,7 @@ As shown in the table below, we conducted extensive baselines (both fine-tuning 
 
 ![main_result](./imgs/main_result.png)
 
-For more detailed experimental results and analysis, please refer to our paper [SciMMIR](https://zenodo.org/records/10521030/files/SciMMIR__Benchmarking_Scientific_Multimodal_Information_Retrieval.pdf?download=1).
+For more detailed experimental results and analysis, please refer to our paper [SciMMIR](https://arxiv.org/abs/2401.13478).
 
 ## Dataset
 
