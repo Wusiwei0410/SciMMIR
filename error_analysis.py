@@ -12,12 +12,12 @@ def load_json(path):
 
 def cal_error_analysis(index, file_name_index_2_subclass, text_name_index_2_subclass, K, direction = None):
     error_static = {
-        'fig_architecture' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result_fig' : 0, 'table_result_tab' : 0, 'table_parameter' : 0, 'count': 0},
-        'fig_illustration' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result_fig' : 0, 'table_result_tab' : 0, 'table_parameter' : 0, 'count': 0},
-        'fig_result_fig' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result_fig' : 0, 'table_result_tab' : 0, 'table_parameter' : 0, 'count': 0},
-        'table_result_tab' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result_fig' : 0, 'table_result_tab' : 0, 'table_parameter' : 0, 'count': 0},
-        'table_parameter' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result_fig' : 0, 'table_result_tab' : 0, 'table_parameter' : 0, 'count': 0},
-        'all' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result_fig' : 0, 'table_result_tab' : 0, 'table_parameter' : 0, 'count': 0},
+        'fig_architecture' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result' : 0, 'table_result' : 0, 'table_parameter' : 0, 'count': 0},
+        'fig_illustration' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result' : 0, 'table_result' : 0, 'table_parameter' : 0, 'count': 0},
+        'fig_result' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result' : 0, 'table_result' : 0, 'table_parameter' : 0, 'count': 0},
+        'table_result' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result' : 0, 'table_result' : 0, 'table_parameter' : 0, 'count': 0},
+        'table_parameter' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result' : 0, 'table_result' : 0, 'table_parameter' : 0, 'count': 0},
+        'all' : {'fig_architecture' : 0, 'fig_illustration' : 0, 'fig_result' : 0, 'table_result' : 0, 'table_parameter' : 0, 'count': 0},
     }
 
     if direction == 'forward':
@@ -39,23 +39,23 @@ def cal_error_analysis(index, file_name_index_2_subclass, text_name_index_2_subc
 
 def print_error_analysis(error_static, direction):
     print(f'+=========={direction}==========+')
-    print('     fig_architecture    fig_illustration    fig_result_fig    table_result_tab    table_parameter')
-    for subclss in ['fig_architecture', 'fig_illustration', 'fig_result_fig', 'table_result_tab', 'table_parameter', 'all']:
+    print('     fig_architecture    fig_illustration    fig_result    table_result    table_parameter')
+    for subclss in ['fig_architecture', 'fig_illustration', 'fig_result', 'table_result', 'table_parameter', 'all']:
         print(f"{subclss}: {round(error_static[subclss]['fig_architecture'] / error_static[subclss]['count']* 100, 2) }\
         {round(error_static[subclss]['fig_illustration'] / error_static[subclss]['count'] * 100, 2) }\
-        {round(error_static[subclss]['fig_result_fig'] / error_static[subclss]['count']* 100, 2) }\
-        {round(error_static[subclss]['table_result_tab'] / error_static[subclss]['count']* 100, 2)}\
+        {round(error_static[subclss]['fig_result'] / error_static[subclss]['count']* 100, 2) }\
+        {round(error_static[subclss]['table_result'] / error_static[subclss]['count']* 100, 2)}\
         {round(error_static[subclss]['table_parameter'] / error_static[subclss]['count']* 100, 2) }")
         # print(f'{subclss}: {error_static[subclss]['fig_architecture'] / error_static[subclss]['count'] }   {error_static[subclss]['fig_illustration'] / error_static[subclss]['count'] }  {error_static[subclss]['fig_result_fig'] / error_static[subclss]['count'] }   {error_static[subclss]['table_result_tab'] / error_static[subclss]['count'] }   {error_static[subclss]['table_parameter'] / error_static[subclss]['count'] }')
 
 if __name__ == '__main__':
     K = 10
+    model_name = 'CLIP'
+    forward_index = torch.load("./data/result/ranking_forward.pt")
+    inverse_index = torch.load("./data/result/ranking_inverse.pt")
 
-    forward_index = torch.load("/ML-A100/team/mm/xw/MMIR_dataset/result/ranking_forward.pt")
-    inverse_index = torch.load("/ML-A100/team/mm/xw/MMIR_dataset/result/ranking_inverse.pt")
-
-    file_name_index_2_subclass = load_json(f"/ML-A100/team/mm/xw/MMIR_dataset/BLIP_torch_data_32B_valid/file_name_index_2_subclass.json")
-    text_name_index_2_subclass = load_json(f"/ML-A100/team/mm/xw/MMIR_dataset/BLIP_torch_data_32B_valid/text_name_index_2_subclass.json")
+    file_name_index_2_subclass = load_json(f"./data/{model_name}_torch_data_test/text_name_index_2_subclass.json") # because the text is related with the fig
+    text_name_index_2_subclass = load_json(f"./data/{model_name}_torch_data_test/text_name_index_2_subclass.json")
 
     error_static_forward = cal_error_analysis(forward_index, file_name_index_2_subclass, text_name_index_2_subclass, K, direction = 'forward')
     error_static_inverse = cal_error_analysis(inverse_index, file_name_index_2_subclass, text_name_index_2_subclass, K, direction = 'inverse')

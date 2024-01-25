@@ -5,6 +5,7 @@ from PIL import Image
 
 from src.lightning_classes import MMIR_LLMs_DataMoudle , MMIR_LLMs
 from pytorch_lightning.callbacks import ModelCheckpoint
+# from transformers import BertModel , BertTokenizer
 import os
 import argparse
 from transformers import BertTokenizer, BertModel, BlipModel, BlipProcessor
@@ -47,7 +48,7 @@ def run(args):
 
     # test
     DM.setup('test')
-    trainer.test(model=Model, datamodule=DM )
+    trainer.test(model=Model, datamodule=DM ) #, ckpt_path = 'best'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="config for Paper MMIR model based on CLIP")
@@ -60,12 +61,12 @@ if __name__ == '__main__':
     # parser.add_argument("--model_name" , type = str , default = 'mplug_owl2_llama2_7b')
     # parser.add_argument("--model_name" , type = str , default = 'kosmos')
 
-    # parser.add_argument("--model_name" , type = str , default = 'lamma-adapter')
+    # parser.add_argument("--model_name" , type = str , default = 'llama-adapter')
     # parser.add_argument("--model_name" , type = str , default = 'blip2-flan-t5-xl')
     # parser.add_argument("--model_name" , type = str , default = 'blip2-flan-t5-xxl')
     # parser.add_argument("--model_name" , type = str , default = 'blip2-opt-2.7b')
     # parser.add_argument("--model_name" , type = str , default = 'blip2-opt-6.7b')
-    parser.add_argument("--model_name" , type = str , default = 'blip2-opt-2.7b')
+    parser.add_argument("--model_name" , type = str , default = 'fuyu-8b')
     
     parser.add_argument("--top_k" , type = int , default = 100)
     parser.add_argument("--embedding_size" , type = int , default = 512)

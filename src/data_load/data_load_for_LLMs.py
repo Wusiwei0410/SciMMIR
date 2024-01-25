@@ -54,9 +54,10 @@ class MMIR_LLMs_Dataset(Dataset):
         self.text_2_image_index = load_json(text_2_image_index)
         self.text_2_index = load_json(text_2_index)
         self.config = config
-        ds_remote = datasets.load_dataset("m-a-p/SciMMIR")
+        ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset")
 
         if mode == 'test':
+            # self.examples = process.get_test_samples(data_path, mode, self.fig_file_name_2_index , self.text_2_index, self.config.image_type )
             self.examples = ds_remote['test']
             logging.info("Current examples: %s" , len(self.examples))
 
@@ -67,6 +68,7 @@ class MMIR_LLMs_Dataset(Dataset):
         example = self.examples[index]
         Query = example['text']
         Fig = example['image']
+        # Fig = Image.open(f"{self.fig_path}{Fig}")
         Fig_num = self.text_2_image_index[Query]
         Text_num = self.text_2_index[Query]
         Image_type = example['class']
@@ -79,3 +81,34 @@ class MMIR_LLMs_Dataset(Dataset):
 
     def __len__(self):
         return len(self.examples)
+
+# class DataProcess():
+
+#     def get_test_samples(self , path , mode, fig_file_name_2_index , text_2_index, image_type ):
+#         logging.info("Getting testing examples at {}.".format(path))
+#         return self._creat_examples(path, mode, fig_file_name_2_index, text_2_index , image_type)
+
+#     def _creat_examples(self, path, mode, fig_file_name_2_index , text_2_index, image_type):
+#         examples = []
+        
+#         # f = open(f'{path}{mode}_data.json', 'r', encoding='utf-8')
+#         f = open(f'{path}{mode}_data.json', 'r', encoding='utf-8')
+#         data = json.load(f)
+#         f.close()
+
+#         for line in data:
+#             Query = line['text']
+#             Fig = line['image']
+#             Fig_num = fig_file_name_2_index[Query]
+#             Text_num = text_2_index[Query]
+#             examples.append(
+#                 InputExample(
+#                     Query=Query,
+#                     Fig=Fig,
+#                     Fig_num = Fig_num,
+#                     Text_num = Text_num,
+#                     Image_type = line['class'],
+#                 )
+#             )
+
+#         return examples

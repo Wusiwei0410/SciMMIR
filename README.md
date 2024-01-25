@@ -99,6 +99,30 @@ python train_main.py --model_name BLIP --train_batch_size 110 --context_length 1
 
 So, if you want to  change the training data, you just  need to change the --image_type and corresponding --training_data_len.
 
+
+
+## Large VLMs Zero-Shot Experiments
+
+You can use the following codes to get the text and image embedings of the LLMs that we used in paper:
+
+```python
+python LLMs_Embedding.py --model_name 'fuyu-8b'
+```
+
+and you can change the model_name to use different VLMs.
+
+Then you can test the text and image embedding in our SciMMIR benchmark by using following codes:
+
+```python
+python test_main_LLMs.py --model_name 'fuyu-8b'
+```
+
+## Quickly Tesing You VLMs
+
+If you want to quickly test your fine-tuned model in our SciMMIR benchmark and don't want to change our codes, we provide a  method.
+
+You can just use the code of Large VLMs Zero-Shot Experiments. Firstly, you need to use your modes to get the image and text  embedding. Finally, runing the test_main_LLMs.py with changing the parameter --LLM_text_embedding_saved_path as your embedding saved path.
+
 ## Potential TODOs before ACL
 
 **TODO**: case study table
