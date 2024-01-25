@@ -117,7 +117,7 @@ Then you can test the text and image embedding in our SciMMIR benchmark by using
 python test_main_LLMs.py --model_name 'fuyu-8b'
 ```
 
-## Quickly Tesing You VLMs
+## Quickly Tesing Your VLMs
 
 If you want to quickly test your fine-tuned model in our SciMMIR benchmark and don't want to change our codes, we provide a  method.
 
