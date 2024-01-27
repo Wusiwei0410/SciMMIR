@@ -13,7 +13,7 @@ import torch
 from transformers import AdamW, get_linear_schedule_with_warmup
 import torch.nn as nn
 import torch.nn.functional as F
-from .lightning_evaluate import SciMMIR_eval
+# from .lightning_evaluate import SciMMIR_eval
 
 def load_json(path):
     f = open(path, 'r')
@@ -114,7 +114,7 @@ def cal_rank(score, index_y):
 class MMIR_LLMs(pl.LightningModule):
     def __init__(self, config):
         super(MMIR_LLMs, self).__init__()
-        self.eval_model=SciMMIR_eval()
+        # self.eval_model=SciMMIR_eval()
         self.config = config
         self.candidates_image_features = None
         self.candidates_text_features = None
