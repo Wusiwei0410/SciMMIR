@@ -52,7 +52,7 @@ python processor_text.py --model_name  CLIP
 python processor_text.py --model_name  BERT
 python processor_text.py --model_name  BLIP
 python processor_figs.py --model_name  CLIP
-python processor_figs.py --model_name  BERT
+python processor_figs.py --model_name  BLIP
 ```
 
 All the processed data would be saved in './data/' folder.
