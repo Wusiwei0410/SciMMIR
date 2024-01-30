@@ -149,7 +149,6 @@ def get_image_embeddings(model, processor, data, max_length, fig_path,model_name
 
 
 def run(args):
-    torch.cuda.set_device(5)
     if os.path.exists(f'{args.save_path}')==False:
         os.mkdir(f'{args.save_path}')
     if os.path.exists(f'{args.save_path}{args.model_name}/') == False:
@@ -197,23 +196,42 @@ def run(args):
     elif args.model_name == 'llava_v1.5_7b':
         from src.LLM_models.MyLLaVA.builder import load_pretrained_model as load_pretrained_model_for_llava
         processor={}
-         model_path='your_path' #you need to download the model in a path 
+        model_path='your_path' #you need to download the model in a path 
         tokenizer, model, image_processor, context_len = load_pretrained_model_for_llava(model_path, None, args.model_name, device_map="cuda", device="cuda")  
         processor['tokenizer']=tokenizer
         processor['image_processor']=image_processor
     model = model.eval()
     ds_remote = datasets.load_dataset("m-a-p/SciMMIR")
+    valid_data = ds_remote['validation']
     test_data = ds_remote['test']
+    train_data = ds_remote['train']
+    
+    
+    
     # data = test_data.select(range(1000))
-    data=test_data
+    if args.candidate_span == 'all_data':
+        image_embeddings_valid, image2index_valid = get_image_embeddings(model, processor, valid_data, args.max_length, args.fig_path,args.model_name)
+        image_embeddings_test, image2index_test = get_image_embeddings(model, processor, test_data, args.max_length, args.fig_path,args.model_name)
+        image_embeddings_train, image2index_train = get_image_embeddings(model, processor, train_data, args.max_length, args.fig_path,args.model_name)
+        image_embeddings = torch.cat(image_embeddings_valid, image_embeddings_test, image_embeddings_train)
+        image2index = image2index_valid
+        image2index.update(image2index_test)
+        image2index.update(image2index_train)
 
-    text_embeddings, text2index = get_text_embeddings(model, processor, data, args.max_length, args.model_name)
-    json_save(text2index, f'{args.save_path}{args.model_name}/text2index_test.json')
-    torch.save(text_embeddings, f'{args.save_path}{args.model_name}/text_embeddings_test.pt')
-
-    image_embeddings, image2index = get_image_embeddings(model, processor, data, args.max_length, args.fig_path,args.model_name)
+        text_embeddings_valid, text2index_valid = get_text_embeddings(model, processor, valid_data, args.max_length, args.model_name)
+        text_embeddings_test, text2index_test = get_text_embeddings(model, processor, test_data, args.max_length, args.model_name)
+        text_embeddings_train, text2index_train = get_text_embeddings(model, processor, train_data, args.max_length, args.model_name)
+        image_embeddings = torch.cat(image_embeddings_valid, image_embeddings_test, image_embeddings_train)
+        text2index = text2index_valid
+        text2index.update(text2index_test)
+        text2index.update(text2index_train)
+    elif args.candidate_span == 'test_split':
+        text_embeddings, text2index = get_text_embeddings(model, processor, test_data, args.max_length, args.model_name)
+        image_embeddings, image2index = get_image_embeddings(model, processor, test_data, args.max_length, args.fig_path,args.model_name)
     json_save(image2index, f'{args.save_path}{args.model_name}/image2index_test.json')
     torch.save(image_embeddings, f'{args.save_path}{args.model_name}/image_embeddings_test.pt')
+    json_save(text2index, f'{args.save_path}{args.model_name}/text2index_test.json')
+    torch.save(text_embeddings, f'{args.save_path}{args.model_name}/text_embeddings_test.pt')
 
 #读数据
 
@@ -224,6 +242,7 @@ if __name__ == '__main__':
     parser.add_argument("--save_path" , type = str , default = "./data/LLMs_Embeddings/")
     parser.add_argument("--fig_path" , type = str , default = "")
     parser.add_argument("--model_name" , type = str , default = 'fuyu-8b')
+    parser.add_argument("--candidate_span" , type = str , default = 'all_data')
     parser.add_argument("--max_length" , type = int , default = 256)
     
     # model_name = 'blip2-flan-t5-xl'
