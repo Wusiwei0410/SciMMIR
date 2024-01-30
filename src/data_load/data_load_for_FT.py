@@ -58,7 +58,7 @@ class SciMMIR_FT_Dataset(Dataset):
         self.selected_training_samples_index = {}
 
 
-        ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset" )
+        ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
         if mode == 'train':
             self.examples = ds_remote['train']
             self.examples = self.examples

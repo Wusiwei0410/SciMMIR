@@ -64,7 +64,7 @@ def process_data(data, tokenizer, model_name, save_path):
 
 def run(args):
 
-    ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset" )
+    ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
     valid_data = ds_remote['validation']
     test_data = ds_remote['test']
 

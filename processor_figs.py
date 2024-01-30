@@ -60,7 +60,7 @@ def run(args):
         model, preprocess = clip.load("ViT-B/32", device=device)
     elif args.model_name == 'BLIP':
         preprocess = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", size = args.image_size)
-    ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset" )
+    ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
 
     if os.path.exists(args.save_path) == False:
         os.mkdir(args.save_path)

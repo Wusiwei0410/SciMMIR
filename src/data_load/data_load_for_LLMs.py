@@ -54,7 +54,7 @@ class MMIR_LLMs_Dataset(Dataset):
         self.text_2_image_index = load_json(text_2_image_index)
         self.text_2_index = load_json(text_2_index)
         self.config = config
-        ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset")
+        ds_remote = datasets.load_dataset("m-a-p/SciMMIR")
 
         if mode == 'test':
             # self.examples = process.get_test_samples(data_path, mode, self.fig_file_name_2_index , self.text_2_index, self.config.image_type )

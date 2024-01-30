@@ -202,7 +202,7 @@ def run(args):
         processor['tokenizer']=tokenizer
         processor['image_processor']=image_processor
     model = model.eval()
-    ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset")
+    ds_remote = datasets.load_dataset("m-a-p/SciMMIR")
     test_data = ds_remote['test']
     # data = test_data.select(range(1000))
     data=test_data

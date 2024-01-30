@@ -12,18 +12,6 @@ import torch
 from src.data_load.data_load_for_LLMs import MMIR_LLMs_Dataset
 from torch.utils.data import DataLoader
 
-# device = "cuda" if torch.cuda.is_available() else "cpu"
-#     model, preprocess = clip.load("ViT-B/32", device=device)
-
-#     dataset_MMIR = MMIR_CLIP_Dataset(
-#         clip.tokenize,
-#         preprocess,
-#         'train',
-#         '/mnt/data4_HDD_14TB/yizhi/datasets/Arxiv_two_months_version/processed_paired_data/',
-#         '/mnt/data4_HDD_14TB/yizhi/datasets/Arxiv_two_months_version/figs/',
-#         context_length = 128,
-#     )
-
 class MMIR_LLMs_DataMoudle(pl.LightningDataModule):
     def __init__(self, config):
         super(MMIR_LLMs_DataMoudle, self).__init__()

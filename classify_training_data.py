@@ -25,7 +25,7 @@ def read_jsonl(file_path):
     return data
 
 if __name__ == '__main__':
-    ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset" )
+    ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
     image_type = 'fig_architecture'
     count = 0
     selected_training_samples_index = {
