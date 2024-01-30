@@ -207,9 +207,9 @@ def run(args):
     # data = test_data.select(range(1000))
     data=test_data
 
-    # text_embeddings, text2index = get_text_embeddings(model, processor, data, args.max_length, args.model_name)
-    # json_save(text2index, f'{args.save_path}{args.model_name}/text2index_test.json')
-    # torch.save(text_embeddings, f'{args.save_path}{args.model_name}/text_embeddings_test.pt')
+    text_embeddings, text2index = get_text_embeddings(model, processor, data, args.max_length, args.model_name)
+    json_save(text2index, f'{args.save_path}{args.model_name}/text2index_test.json')
+    torch.save(text_embeddings, f'{args.save_path}{args.model_name}/text_embeddings_test.pt')
 
     image_embeddings, image2index = get_image_embeddings(model, processor, data, args.max_length, args.fig_path,args.model_name)
     json_save(image2index, f'{args.save_path}{args.model_name}/image2index_test.json')
