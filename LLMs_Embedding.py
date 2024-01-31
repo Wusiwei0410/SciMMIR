@@ -208,23 +208,13 @@ def run(args):
     
     
     
-    # data = test_data.select(range(1000))
+    #test_data = test_data.select(range(10))
+    #train_data = train_data.select(range(10))
+    #valid_data = valid_data.select(range(10))
     if args.candidate_span == 'all_data':
-        image_embeddings_valid, image2index_valid = get_image_embeddings(model, processor, valid_data, args.max_length, args.fig_path,args.model_name)
-        image_embeddings_test, image2index_test = get_image_embeddings(model, processor, test_data, args.max_length, args.fig_path,args.model_name)
-        image_embeddings_train, image2index_train = get_image_embeddings(model, processor, train_data, args.max_length, args.fig_path,args.model_name)
-        image_embeddings = torch.cat(image_embeddings_valid, image_embeddings_test, image_embeddings_train)
-        image2index = image2index_valid
-        image2index.update(image2index_test)
-        image2index.update(image2index_train)
-
-        text_embeddings_valid, text2index_valid = get_text_embeddings(model, processor, valid_data, args.max_length, args.model_name)
-        text_embeddings_test, text2index_test = get_text_embeddings(model, processor, test_data, args.max_length, args.model_name)
-        text_embeddings_train, text2index_train = get_text_embeddings(model, processor, train_data, args.max_length, args.model_name)
-        image_embeddings = torch.cat(image_embeddings_valid, image_embeddings_test, image_embeddings_train)
-        text2index = text2index_valid
-        text2index.update(text2index_test)
-        text2index.update(text2index_train)
+        test_data = datasets.concatenate_datasets([test_data, valid_data, train_data])
+        text_embeddings, text2index = get_text_embeddings(model, processor, test_data, args.max_length, args.model_name)
+        image_embeddings, image2index = get_image_embeddings(model, processor, test_data, args.max_length, args.fig_path,args.model_name)
     elif args.candidate_span == 'test_split':
         text_embeddings, text2index = get_text_embeddings(model, processor, test_data, args.max_length, args.model_name)
         image_embeddings, image2index = get_image_embeddings(model, processor, test_data, args.max_length, args.fig_path,args.model_name)

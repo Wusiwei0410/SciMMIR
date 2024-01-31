@@ -60,12 +60,13 @@ def run(args):
         model, preprocess = clip.load("ViT-B/32", device=device)
     elif args.model_name == 'BLIP':
         preprocess = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", size = args.image_size)
-    ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
+    # saved_data_path = "/ML-A100/team/mm/xw/MMIR_dataset/processed_data/"
+    ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset" )
 
     if os.path.exists(args.save_path) == False:
         os.mkdir(args.save_path)
     
-
+    #验证集也单独处理一份，这样可以节省验证的事件，验证的时候候选集小一点
     valid_data = ds_remote['validation']
     data = valid_data
 
@@ -78,7 +79,13 @@ def run(args):
 
 
     #测试集也单独处理一份，这样可以节省验证的事件，验证的时候候选集小一点
-    test_data = ds_remote['test']
+    if args.candidates_span == 'all_data':
+        test_data = ds_remote['test']
+        valid_data = ds_remote['validation']
+        train_data = ds_remote['train']
+        test_data = datasets.concatenate_datasets([test_data, valid_data, train_data])
+    elif args.candidates_span == 'test_split':
+        test_data = ds_remote['test']
     data = test_data
 
     save_path = f'{args.save_path}{args.model_name}_torch_data_test/'
@@ -91,6 +98,7 @@ def run(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="config for process text")
     parser.add_argument("--model_name" , type = str , default = "CLIP")
+    parser.add_argument("--candidates_span" , type = str , default = "all_data")
     parser.add_argument("--save_path" , type = str , default = './data/')
     parser.add_argument("--image_size" , type = int , default = 384)
 

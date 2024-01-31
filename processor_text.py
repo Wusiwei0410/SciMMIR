@@ -34,6 +34,7 @@ def process_data(data, tokenizer, model_name, save_path):
     
     for line in tqdm(data):
         caption = line['text']
+        # inputs = tokenizer(caption, add_special_tokens=True,padding='max_length', truncation=True, max_length = 128, return_tensors = 'pt')
         if model_name == 'BERT'or model_name == 'BLIP':
             text_name_index_2_subclass[len(input_ids)] = line['class']
             text_name_index[caption] = len(input_ids)
@@ -59,12 +60,13 @@ def process_data(data, tokenizer, model_name, save_path):
         attention_mask = torch.cat(attention_mask)
         torch.save(input_ids, f'{save_path}input_ids.pt')
         torch.save(attention_mask, f'{save_path}attention_mask.pt')
+    # print(text_token[torch.tensor(6478)])
     json_save(text_name_index, f'{save_path}text_index.json')
     json_save(text_name_index_2_subclass, f'{save_path}text_name_index_2_subclass.json')
 
 def run(args):
 
-    ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
+    ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset" )
     valid_data = ds_remote['validation']
     test_data = ds_remote['test']
 
@@ -84,6 +86,13 @@ def run(args):
         os.mkdir(args.save_path)
 
     #测试集也单独处理一份，这样可以节省验证的事件，验证的时候候选集小一点
+    if args.candidates_span == 'all_data':
+        test_data = ds_remote['test']
+        valid_data = ds_remote['validation']
+        train_data = ds_remote['train']
+        test_data = datasets.concatenate_datasets([test_data, valid_data, train_data])
+    elif args.candidates_span == 'test_split':
+        test_data = ds_remote['test']
     data = test_data
 
     save_path = f'{args.save_path}{args.model_name}_torch_data_test/'
@@ -104,6 +113,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="config for process text")
     parser.add_argument("--model_name" , type = str , default = "CLIP")
     parser.add_argument("--save_path" , type = str , default = './data/')
-    
+    parser.add_argument("--candidates_span" , type = str , default = "all_data")
     args = parser.parse_args()
     run(args)
