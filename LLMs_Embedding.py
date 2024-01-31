@@ -174,7 +174,7 @@ def run(args):
     elif args.model_name == 'llama-adapter':
         import src.LLM_models.llama as llama
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        llama_dir = 'your_path' #you need to download the model in a path 
+        llama_dir = "/your_llama-7B_path"
         model, processor = llama.load("BIAS-7B", llama_dir, llama_type="7B", device=device)
     elif args.model_name == "kosmos":
         from src.LLM_models.My_kosmos2 import Kosmos2ForConditionalGeneration
@@ -185,8 +185,7 @@ def run(args):
     elif args.model_name == 'mplug_owl2_llama2_7b':
         from src.LLM_models.Mymplug_owl2.builder import load_pretrained_model as load_pretrained_model_for_mymplug
         processor={}
-        model_path='your_path' #you need to download the model in a path 
-        tokenizer, model, image_processor, context_len = load_pretrained_model_for_mymplug(model_path, None, args.model_name, load_8bit=False, load_4bit=False, device_map="cuda", device="cuda")
+        tokenizer, model, image_processor, context_len = load_pretrained_model_for_mymplug('MAGAer13/mplug-owl2-llama2-7b',None, args.model_name,load_8bit=False, load_4bit=False, device_map="cuda", device="cuda")
         # model=model.float()
         tokenizer.padding_side = 'left'
         tokenizer.pad_token_id = tokenizer.eos_token_id
@@ -196,8 +195,7 @@ def run(args):
     elif args.model_name == 'llava_v1.5_7b':
         from src.LLM_models.MyLLaVA.builder import load_pretrained_model as load_pretrained_model_for_llava
         processor={}
-        model_path='your_path' #you need to download the model in a path 
-        tokenizer, model, image_processor, context_len = load_pretrained_model_for_llava(model_path, None, args.model_name, device_map="cuda", device="cuda")  
+        tokenizer, model, image_processor, context_len = load_pretrained_model_for_llava('liuhaotian/llava-v1.5-7b', None, args.model_name,device_map="cuda", device="cuda")  
         processor['tokenizer']=tokenizer
         processor['image_processor']=image_processor
     model = model.eval()
@@ -240,7 +238,7 @@ if __name__ == '__main__':
     # model_name = 'blip2-opt-6.7b'
     # model_name = 'blip2-flan-t5-xxl'
     # 'fuyu-8b'
-    # 'lamma-adapter'
+    # 'llama-adapter'
     # 'kosmos'
     # 'mplug_owl2_llama2_7b'
     # 'llava_v1.5_7b'
