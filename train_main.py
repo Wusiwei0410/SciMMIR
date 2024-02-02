@@ -30,16 +30,16 @@ def run(args):
     if args.model_name == 'CLIP':
         model, preprocess = clip.load("ViT-B/32", device=device)
     elif args.model_name == 'BLIP':
-        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", size = args.image_size)#, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
-        model = BlipModel.from_pretrained("Salesforce/blip-image-captioning-base").cuda().float()#, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
+        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", size = args.image_size)
+        model = BlipModel.from_pretrained("Salesforce/blip-image-captioning-base").cuda().float()
         preprocess = processor
     elif args.model_name == 'BLIP-large':
-        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large", size = args.image_size) #, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
-        model = BlipModel.from_pretrained("Salesforce/blip-image-captioning-large").cuda().float() #, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
+        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large", size = args.image_size)
+        model = BlipModel.from_pretrained("Salesforce/blip-image-captioning-large").cuda().float()
         preprocess = processor
     if args.Use_BERT == True:
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')#, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
-        BERT_model = BertModel.from_pretrained("bert-base-uncased") #, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
+        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        BERT_model = BertModel.from_pretrained("bert-base-uncased")
     else:
         tokenizer = clip.tokenize
     # lightningmodule checkpoint
