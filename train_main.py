@@ -5,6 +5,7 @@ from PIL import Image
 
 from src.lightning_classes import SciMMIR_FT_DataMoudle , SciMMIR_FT
 from pytorch_lightning.callbacks import ModelCheckpoint
+# from transformers import BertModel , BertTokenizer
 import os
 import argparse
 from transformers import BertTokenizer, BertModel, BlipModel, BlipProcessor
@@ -29,16 +30,16 @@ def run(args):
     if args.model_name == 'CLIP':
         model, preprocess = clip.load("ViT-B/32", device=device)
     elif args.model_name == 'BLIP':
-        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", size = args.image_size)
-        model = BlipModel.from_pretrained("Salesforce/blip-image-captioning-base").cuda().float()
+        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", size = args.image_size)#, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
+        model = BlipModel.from_pretrained("Salesforce/blip-image-captioning-base").cuda().float()#, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
         preprocess = processor
     elif args.model_name == 'BLIP-large':
-        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large", size = args.image_size)
-        model = BlipModel.from_pretrained("Salesforce/blip-image-captioning-large").cuda().float()
+        processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large", size = args.image_size) #, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
+        model = BlipModel.from_pretrained("Salesforce/blip-image-captioning-large").cuda().float() #, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
         preprocess = processor
     if args.Use_BERT == True:
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-        BERT_model = BertModel.from_pretrained("bert-base-uncased")
+        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')#, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
+        BERT_model = BertModel.from_pretrained("bert-base-uncased") #, cache_dir = '/ML-A100/team/mm/xw/models/hub/'
     else:
         tokenizer = clip.tokenize
     # lightningmodule checkpoint
@@ -89,7 +90,7 @@ def run(args):
 
     # test
     DM.setup('test')
-    trainer.test(model=Model, datamodule=DM , ckpt_path = 'best')
+    trainer.test(model=Model, datamodule=DM, ckpt_path = 'best' ) #, ckpt_path = 'best'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="config for SciMMIR model")
@@ -100,22 +101,25 @@ if __name__ == '__main__':
     # parser.add_argument("--image_type" , type = str , default = 'fig_result')
     # parser.add_argument("--image_type" , type = str , default = 'table_result')
     # parser.add_argument("--image_type" , type = str , default = 'table_parameter')
-
+    
+    #parser.add_argument("--ckpt_path" , type = str , default = '')
     parser.add_argument("--select_print" , type = str , default = 'print_all_setting')
     parser.add_argument("--score_method" , type = str , default = 'Matrix Dot Product')
     parser.add_argument("--model_name" , type = str , default = 'CLIP')
     parser.add_argument("--training_data_len" , type = int , default = 504731)
+    parser.add_argument("--figure_process_mat_num_valid", type=int, default=4)
+    parser.add_argument("--figure_process_mat_num_test", type=int, default=107)#107
     parser.add_argument("--top_k" , type = int , default = 100)
     parser.add_argument("--embedding_size" , type = int , default = 512)
     parser.add_argument("--text_feature_len", type=int, default=768)
     parser.add_argument("--image_feature_len", type=int, default=512)
     parser.add_argument("--val_batch_size", type=int, default=128)
-    parser.add_argument("--test_batch_size", type=int, default=128)
+    parser.add_argument("--test_batch_size", type=int, default=32)
     parser.add_argument("--train_batch_size" , type = int , default = 210)
     parser.add_argument("--save_top_k", type = int , default = 1)
     parser.add_argument("--max_epochs" , type = int ,default = 5)
-    parser.add_argument("--text_process_num" , type = int , default = 1000)
-    parser.add_argument("--figure_process_num" , type = int , default = 100)
+    parser.add_argument("--text_process_num" , type = int , default = 2000)
+    parser.add_argument("--figure_process_num" , type = int , default = 800)
     parser.add_argument("--gradient_clip_val", type = float , default= 5.0 )
     parser.add_argument("--weight_decay", type=float, default= 0.01)
     parser.add_argument("--alpha", type=float, default= 0.05)
@@ -130,8 +134,6 @@ if __name__ == '__main__':
     parser.add_argument("--result_save_path", type=str, default="./data/result/")
     parser.add_argument("--num_warmup_steps", type=int, default= floor(floor(parser.parse_args().training_data_len / parser.parse_args().train_batch_size) * parser.parse_args().max_epochs / 10))
     parser.add_argument("--num_training_steps", type=int, default=floor(parser.parse_args().training_data_len / parser.parse_args().train_batch_size) * parser.parse_args().max_epochs)#12020
-    parser.add_argument("--figure_process_mat_num_valid", type=int, default=4)
-    parser.add_argument("--figure_process_mat_num_test", type=int, default=4)
 
     parser.add_argument("--text_2_image_index_valid", type=str, default=f"{parser.parse_args().model_name}_torch_data_valid/text_2_image_index.json")
     parser.add_argument("--text_2_image_index_test", type=str, default=f"{parser.parse_args().model_name}_torch_data_test/text_2_image_index.json")
