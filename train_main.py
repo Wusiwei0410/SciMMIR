@@ -5,11 +5,11 @@ from PIL import Image
 
 from src.lightning_classes import SciMMIR_FT_DataMoudle , SciMMIR_FT
 from pytorch_lightning.callbacks import ModelCheckpoint
-# from transformers import BertModel , BertTokenizer
+from src.MyBlip.MyBlip import Blip2Model
 import os
 import argparse
-from transformers import BertTokenizer, BertModel, BlipModel, BlipProcessor
-from lavis.models import load_model_and_preprocess
+from transformers import BertTokenizer, BertModel, BlipModel, BlipProcessor, Blip2Processor
+#from lavis.models import load_model_and_preprocess
 from math import floor
 
 def run(args):
@@ -37,6 +37,15 @@ def run(args):
         processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-large", size = args.image_size)
         model = BlipModel.from_pretrained("Salesforce/blip-image-captioning-large").cuda().float()
         preprocess = processor
+    elif args.model_name == 'BLIP-FLAN-T5-XL':
+        model = Blip2Model.from_pretrained("Salesforce/blip2-flan-t5-xl").cuda().float()
+        processor = Blip2Processor.from_pretrained("Salesforce/blip2-flan-t5-xl")
+        preprocess = processor
+    elif args.model_name == 'BLIP-FLAN-T5-XXL':
+        model = Blip2Model.from_pretrained("Salesforce/blip2-flan-t5-xxl").cuda().float()
+        processor = Blip2Processor.from_pretrained("Salesforce/blip2-flan-t5-xxl")
+        preprocess = processor
+        
     if args.Use_BERT == True:
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         BERT_model = BertModel.from_pretrained("bert-base-uncased")
@@ -53,17 +62,29 @@ def run(args):
 
     callbacks = [checkpoint_callback]
 
-    trainer = pl.Trainer(
-        callbacks = callbacks,
-        accelerator="gpu",
-        devices = args.gpus,
-        # gpus = args.gpus,
-        max_epochs = args.max_epochs,
-        fast_dev_run=False,
-        gradient_clip_val=args.gradient_clip_val,
-        num_sanity_val_steps=0,
-        check_val_every_n_epoch = 1,
-    )
+    if args.multi_gpus > 0:
+        trainer = pl.Trainer(
+            callbacks = callbacks,
+            accelerator="gpu",
+            devices = list(range(int(args.multi_gpus))),
+            max_epochs = args.max_epochs,
+            fast_dev_run=False,
+            gradient_clip_val=args.gradient_clip_val,
+            num_sanity_val_steps=0,
+            check_val_every_n_epoch = 1,
+            strategy="ddp_find_unused_parameters_true",
+        )
+    else:
+        trainer = pl.Trainer(
+            callbacks = callbacks,
+            accelerator="gpu",
+            devices = args.gpus,
+            max_epochs = args.max_epochs,
+            fast_dev_run=False,
+            gradient_clip_val=args.gradient_clip_val,
+            num_sanity_val_steps=0,
+            check_val_every_n_epoch = 1,
+        )
 
     DM = SciMMIR_FT_DataMoudle(
         preprocess = preprocess,
@@ -90,7 +111,7 @@ def run(args):
 
     # test
     DM.setup('test')
-    trainer.test(model=Model, datamodule=DM, ckpt_path = 'best' ) #, ckpt_path = 'best'
+    trainer.test(model=Model, datamodule=DM, ckpt_path = 'best') #, ckpt_path = 'best' ; , ckpt_path = './checkpoints_384/MMIR_BLIP-FLAN-T5-XL_overall/checkpoints--Validation/MRR_forward=0.1153.ckpt'
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="config for SciMMIR model")
@@ -102,6 +123,7 @@ if __name__ == '__main__':
     # parser.add_argument("--image_type" , type = str , default = 'table_result')
     # parser.add_argument("--image_type" , type = str , default = 'table_parameter')
     
+    parser.add_argument("--multi_gpus" , type = int , default = False)
     #parser.add_argument("--ckpt_path" , type = str , default = '')
     parser.add_argument("--select_print" , type = str , default = 'print_all_setting')
     parser.add_argument("--score_method" , type = str , default = 'Matrix Dot Product')

@@ -71,36 +71,36 @@ def cal_metric(target_rank, target_types, image_type, direction, select_print = 
 
     if select_print == 'print_all_setting':
         print('all')
-        print(f'Validation/MRR_forward_{direction}','{:.4f}'.format(MRR.item()))
-        print(f'Validation/hit1_{direction}','{:.4f}'.format(hit1.item()))
-        print(f'Validation/hithit3_{direction}','{:.4f}'.format(hit3.item()))
-        print(f'Validation/hit10_{direction}', '{:.4f}'.format(hit10.item()))
+        print(f'Validation/MRR_forward_{direction}','{:.5f}'.format(MRR.item()))
+        print(f'Validation/hit1_{direction}','{:.5f}'.format(hit1.item()))
+        print(f'Validation/hithit3_{direction}','{:.5f}'.format(hit3.item()))
+        print(f'Validation/hit10_{direction}', '{:.5f}'.format(hit10.item()))
 
         for t in metric:
             print(f"{t}")
-            print(f'Validation/MRR_forward_{direction}', '{:.4f}'.format(metric[t]['MRR'].item()))
-            print(f'Validation/hit1_{direction}', '{:.4f}'.format(metric[t]['hit1'].item()))
-            print(f'Validation/hithit3_{direction}', '{:.4f}'.format(metric[t]['hit3'].item()))
-            print(f'Validation/hit10_{direction}', '{:.4f}'.format(metric[t]['hit10'].item()))
+            print(f'Validation/MRR_forward_{direction}', '{:.5f}'.format(metric[t]['MRR'].item()))
+            print(f'Validation/hit1_{direction}', '{:.5f}'.format(metric[t]['hit1'].item()))
+            print(f'Validation/hithit3_{direction}', '{:.5f}'.format(metric[t]['hit3'].item()))
+            print(f'Validation/hit10_{direction}', '{:.5f}'.format(metric[t]['hit10'].item()))
     elif select_print in ['fig_architecture', 'fig_illustration', 'fig_result', 'table_result', 'table_parameter']:
         print('all')
-        print(f'Validation/MRR_forward_{direction}','{:.4f}'.format(MRR.item()))
-        print(f'Validation/hit1_{direction}','{:.4f}'.format(hit1.item()))
-        print(f'Validation/hithit3_{direction}','{:.4f}'.format(hit3.item()))
-        print(f'Validation/hit10_{direction}', '{:.4f}'.format(hit10.item()))
+        print(f'Validation/MRR_forward_{direction}','{:.5f}'.format(MRR.item()))
+        print(f'Validation/hit1_{direction}','{:.5f}'.format(hit1.item()))
+        print(f'Validation/hithit3_{direction}','{:.5f}'.format(hit3.item()))
+        print(f'Validation/hit10_{direction}', '{:.5f}'.format(hit10.item()))
         for t in metric:
             if t == select_print:
                 print(f"{t}")
-                print(f'Validation/MRR_forward_{direction}', '{:.4f}'.format(metric[t]['MRR'].item()))
-                print(f'Validation/hit1_{direction}', '{:.4f}'.format(metric[t]['hit1'].item()))
-                print(f'Validation/hithit3_{direction}', '{:.4f}'.format(metric[t]['hit3'].item()))
-                print(f'Validation/hit10_{direction}', '{:.4f}'.format(metric[t]['hit10'].item()))
+                print(f'Validation/MRR_forward_{direction}', '{:.5f}'.format(metric[t]['MRR'].item()))
+                print(f'Validation/hit1_{direction}', '{:.5f}'.format(metric[t]['hit1'].item()))
+                print(f'Validation/hithit3_{direction}', '{:.5f}'.format(metric[t]['hit3'].item()))
+                print(f'Validation/hit10_{direction}', '{:.5f}'.format(metric[t]['hit10'].item()))
     elif select_print == 'only_overall':
         print('all')
-        print(f'Validation/MRR_forward_{direction}','{:.4f}'.format(MRR.item()))
-        print(f'Validation/hit1_{direction}','{:.4f}'.format(hit1.item()))
-        print(f'Validation/hithit3_{direction}','{:.4f}'.format(hit3.item()))
-        print(f'Validation/hit10_{direction}', '{:.4f}'.format(hit10.item()))
+        print(f'Validation/MRR_forward_{direction}','{:.5f}'.format(MRR.item()))
+        print(f'Validation/hit1_{direction}','{:.5f}'.format(hit1.item()))
+        print(f'Validation/hithit3_{direction}','{:.5f}'.format(hit3.item()))
+        print(f'Validation/hit10_{direction}', '{:.5f}'.format(hit10.item()))
     #if select_print don't in these keywords, we don't print results
 
     if image_type == 'overall':
@@ -123,7 +123,7 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
         input_ids = torch.load(f'{datasets_saved_path + text_process_mat_path}input_ids.pt')
         attention_mask = torch.load(f'{datasets_saved_path + text_process_mat_path}attention_mask.pt')
         batch_size = input_ids.size(0)
-    elif model_name == 'BLIP' or model_name == 'BLIP-large':
+    elif model_name == 'BLIP' or model_name == 'BLIP-large' or model_name == 'BLIP-FLAN-T5-XL' or model_name == 'BLIP-FLAN-T5-XXL':
         input_ids = torch.load(f'{datasets_saved_path + text_process_mat_path}input_ids.pt')
         attention_mask = torch.load(f'{datasets_saved_path + text_process_mat_path}attention_mask.pt')
         batch_size = input_ids.size(0)
@@ -132,11 +132,18 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
         batch_size = text_token.size(0)
 
     for i in range(0, batch_size, text_process_num):
-        if Use_BERT == True or model_name == 'BLIP' or model_name == 'BLIP-large':
+        if Use_BERT == True or model_name == 'BLIP' or model_name == 'BLIP-large' or model_name == 'BLIP-FLAN-T5-XL' or model_name == 'BLIP-FLAN-T5-XXL':
             input_ids_item = input_ids[i : i + text_process_num].cuda()
             attention_mask_item = attention_mask[i : i + text_process_num].cuda()
             if Use_BERT == True:
                 candidates_text_features.append(linear_layer(language_model(input_ids= input_ids_item, attention_mask = attention_mask_item).last_hidden_state[:,0,:].cuda()))
+            elif model_name in ['BLIP-FLAN-T5-XL', 'BLIP-FLAN-T5-XXL']:
+                text_feature = model.get_text_features(input_ids= input_ids_item, attention_mask = attention_mask_item, output_hidden_states = True).hidden_states[-1]
+                
+                attention_mask_item = attention_mask_item.unsqueeze(2)
+                text_feature = text_feature * attention_mask_item
+                text_feature = text_feature.sum(dim=1) / attention_mask_item.sum(dim=1)
+                candidates_text_features.append(text_feature)
             else:
                 candidates_text_features.append(model.get_text_features(input_ids= input_ids_item, attention_mask = attention_mask_item))
             input_ids_item = input_ids_item.cpu()
@@ -158,6 +165,10 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
                 candidates_image_features.append(model.encode_image(figure_process_mat_part.cuda()))
             elif model_name == 'BLIP' or model_name == 'BLIP-large':
                 candidates_image_features.append(model.get_image_features(pixel_values = figure_process_mat_part.cuda()))
+            elif model_name == 'BLIP-FLAN-T5-XL' or model_name == 'BLIP-FLAN-T5-XXL':
+                fig_feature = model.get_image_features(pixel_values = figure_process_mat_part.cuda())
+                fig_feature = fig_feature.mean(dim=1)
+                candidates_image_features.append(fig_feature)
     figure_process_mat_part = figure_process_mat_part.cpu()
     candidates_image_features = torch.cat(candidates_image_features, dim = 0)
     torch.cuda.empty_cache()
@@ -167,10 +178,17 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
 class SciMMIR_FT(pl.LightningModule):
     def __init__(self, config, model, BERT_model = None):
         super(SciMMIR_FT, self).__init__()
-        self.model = model.float()
-        self.model.train()
-        
         self.config = config
+        self.model = model.float()
+        #self.model.train()
+
+        if config.model_name in ['BLIP-FLAN-T5-XXL', 'BLIP-FLAN-T5-XL']:
+            for p in self.model.parameters():
+                p.requires_grad = False 
+            for n, p in self.model.named_parameters():
+                if n != 'qformer':
+                   p.requires_grad = True 
+        
         if BERT_model != None:
             self.BERT = BERT_model
             self.Linear_text = torch.nn.Linear(self.config.text_feature_len, self.config.image_feature_len)
@@ -214,13 +232,23 @@ class SciMMIR_FT(pl.LightningModule):
                 Q_token['input_ids'] = Q_token['input_ids'].squeeze(1)
                 Q_token['attention_mask'] = Q_token['attention_mask'].squeeze(1)
                 query_features = self.model.get_text_features(input_ids = Q_token['input_ids'], attention_mask = Q_token['attention_mask'])
-
+            elif self.config.model_name == 'BLIP-FLAN-T5-XL' or self.config.model_name == 'BLIP-FLAN-T5-XXL':
+                Q_token['input_ids'] = Q_token['input_ids'].squeeze(1)
+                Q_token['attention_mask'] = Q_token['attention_mask'].squeeze(1)
+                query_features = self.model.get_text_features(input_ids = Q_token['input_ids'], attention_mask = Q_token['attention_mask'], output_hidden_states = True).hidden_states[-1]
+                attention_mask = Q_token['attention_mask']
+                attention_mask = attention_mask.unsqueeze(2)
+                query_features = query_features * attention_mask
+                query_features = query_features.sum(dim=1) / attention_mask.sum(dim=1)
+                
         if self.config.model_name == 'CLIP':
             Fig_preprocess = Fig_preprocess.squeeze(1).cuda()
             fig_features = self.model.encode_image(Fig_preprocess)
-        elif self.config.model_name == 'BLIP' or self.config.model_name == 'BLIP-large':
+        elif self.config.model_name == 'BLIP' or self.config.model_name == 'BLIP-large' :
             fig_features = self.model.get_image_features(pixel_values = Fig_preprocess)
-
+        elif self.config.model_name == 'BLIP-FLAN-T5-XL' or self.config.model_name == 'BLIP-FLAN-T5-XXL':
+            fig_features = self.model.get_image_features(pixel_values = Fig_preprocess)
+            fig_features = fig_features.mean(dim=1)
         if self.candidates_image_features == None or self.candidates_text_features == None:
             score_forward = torch.matmul(query_features, fig_features.transpose(0, 1))
             targets_forward = torch.eye(score_forward.size(0)).cuda()
@@ -359,34 +387,20 @@ class SciMMIR_FT(pl.LightningModule):
         
     def configure_optimizers(self):
         no_decay = ["bias", "LayerNorm.weight"]
-        if self.config.score_method == 'Matrix Dot Product':
-                optimizer_grouped_parameters = [
-                {
-                    "params": [p for n, p in self.model.named_parameters() if not any(nd in n for nd in no_decay)],
-                    "weight_decay": self.config.weight_decay,
-                    "lr": self.config.lr_CLIP
-                },
-                {
-                    "params": [p for n, p in self.model.named_parameters() if any(nd in n for nd in no_decay)],
-                    "weight_decay": 0,
-                    "lr": self.config.lr_CLIP,
-                },
-            ]
-
-        else:
-            optimizer_grouped_parameters = [
-                {
-                    "params": [p for n, p in self.model.named_parameters() if not any(nd in n for nd in no_decay)],
-                    "weight_decay": self.config.weight_decay,
-                    "lr": self.config.lr_CLIP
-                },
-                {
-                    "params": [p for n, p in self.model.named_parameters() if any(nd in n for nd in no_decay)],
-                    "weight_decay": 0,
-                    "lr": self.config.lr_CLIP,
-                },
-            ]
+        
         if self.config.Use_BERT == True:
+                optimizer_grouped_parameters = [
+                    {
+                        "params": [p for n, p in self.model.named_parameters() if not any(nd in n for nd in no_decay)],
+                        "weight_decay": self.config.weight_decay,
+                        "lr": self.config.lr_CLIP
+                    },
+                    {
+                        "params": [p for n, p in self.model.named_parameters() if any(nd in n for nd in no_decay)],
+                        "weight_decay": 0,
+                        "lr": self.config.lr_CLIP,
+                    },
+                ]
                 optimizer_grouped_parameters.append(
                     {
                         "params": [p for n, p in self.BERT.named_parameters() if not any(nd in n for nd in no_decay)],
@@ -409,6 +423,28 @@ class SciMMIR_FT(pl.LightningModule):
                         "lr": self.config.lr_Linner
                     }
                 )
+        elif self.config.model_name in ['BLIP-FLAN-T5-XXL', 'BLIP-FLAN-T5-XL']:
+                optimizer_grouped_parameters = [
+                    {
+                        "params": [p for n, p in self.model.qformer.named_parameters()],
+                        "weight_decay": self.config.weight_decay,
+                        "lr": self.config.lr_CLIP
+                    },
+                ]
+
+        else:
+                optimizer_grouped_parameters = [
+                    {
+                        "params": [p for n, p in self.model.named_parameters() if not any(nd in n for nd in no_decay)],
+                        "weight_decay": self.config.weight_decay,
+                        "lr": self.config.lr_CLIP
+                    },
+                    {
+                        "params": [p for n, p in self.model.named_parameters() if any(nd in n for nd in no_decay)],
+                        "weight_decay": 0,
+                        "lr": self.config.lr_CLIP,
+                    },
+                ]
 
         optimizer = AdamW(
             optimizer_grouped_parameters,

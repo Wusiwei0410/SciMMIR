@@ -5,7 +5,6 @@ from PIL import Image
 from tqdm import tqdm
 from transformers import BertTokenizer, BertModel
 import os
-from lavis.models import load_model_and_preprocess
 from transformers import BlipProcessor, BlipModel
 import argparse
 import datasets
@@ -35,7 +34,7 @@ def process_data(data, tokenizer, model_name, save_path):
     for line in tqdm(data):
         caption = line['text']
         # inputs = tokenizer(caption, add_special_tokens=True,padding='max_length', truncation=True, max_length = 128, return_tensors = 'pt')
-        if model_name == 'BERT'or model_name == 'BLIP':
+        if model_name == 'BERT'or model_name in ['BLIP', 'BLIP-FLAN-T5-XXL', 'BLIP-FLAN-T5-XL']:
             text_name_index_2_subclass[len(input_ids)] = line['class']
             text_name_index[caption] = len(input_ids)
             inputs = tokenizer(text = caption, add_special_tokens=True,padding='max_length', truncation=True, max_length = 128, return_tensors = 'pt')
@@ -55,18 +54,17 @@ def process_data(data, tokenizer, model_name, save_path):
     elif model_name  == 'CLIP':
         text_token = torch.cat(text_token)
         torch.save(text_token, f'{save_path}text_mat.pt')
-    elif model_name == 'BLIP':
+    elif model_name in ['BLIP', 'BLIP-FLAN-T5-XXL', 'BLIP-FLAN-T5-XL']:
         input_ids = torch.cat(input_ids)
         attention_mask = torch.cat(attention_mask)
         torch.save(input_ids, f'{save_path}input_ids.pt')
         torch.save(attention_mask, f'{save_path}attention_mask.pt')
-    # print(text_token[torch.tensor(6478)])
     json_save(text_name_index, f'{save_path}text_index.json')
     json_save(text_name_index_2_subclass, f'{save_path}text_name_index_2_subclass.json')
 
 def run(args):
 
-    ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset" )
+    ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
     valid_data = ds_remote['validation']
     test_data = ds_remote['test']
 
@@ -81,7 +79,15 @@ def run(args):
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
         processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base" )
         tokenizer = processor
-
+    elif args.model_name == 'BLIP-FLAN-T5-XL':
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
+        processor = BlipProcessor.from_pretrained("Salesforce/blip2-flan-t5-xl")
+        tokenizer = processor
+    elif args.model_name == 'BLIP-FLAN-T5-XXL':
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu") 
+        processor = BlipProcessor.from_pretrained("Salesforce/blip2-flan-t5-xxl")
+        tokenizer = processor
+    
     if os.path.exists(args.save_path) == False:
         os.mkdir(args.save_path)
 

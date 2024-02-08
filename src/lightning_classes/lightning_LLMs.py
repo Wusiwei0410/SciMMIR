@@ -13,7 +13,7 @@ import torch
 from transformers import AdamW, get_linear_schedule_with_warmup
 import torch.nn as nn
 import torch.nn.functional as F
-# from .lightning_evaluate import SciMMIR_eval
+from .lightning_evaluate import SciMMIR_eval
 
 def load_json(path):
     f = open(path, 'r')
@@ -66,37 +66,36 @@ def cal_metric(target_rank, target_types, image_type, direction, select_print = 
 
     if select_print == 'print_all_setting':
         print('all')
-        print(f'Validation/MRR_forward_{direction}','{:.4f}'.format(MRR.item()))
-        print(f'Validation/hit1_{direction}','{:.4f}'.format(hit1.item()))
-        print(f'Validation/hithit3_{direction}','{:.4f}'.format(hit3.item()))
-        print(f'Validation/hit10_{direction}', '{:.4f}'.format(hit10.item()))
+        print(f'Validation/MRR_forward_{direction}','{:.5f}'.format(MRR.item()))
+        print(f'Validation/hit1_{direction}','{:.5f}'.format(hit1.item()))
+        print(f'Validation/hithit3_{direction}','{:.5f}'.format(hit3.item()))
+        print(f'Validation/hit10_{direction}', '{:.5f}'.format(hit10.item()))
 
         for t in metric:
             print(f"{t}")
-            print(f'Validation/MRR_forward_{direction}', '{:.4f}'.format(metric[t]['MRR'].item()))
-            print(f'Validation/hit1_{direction}', '{:.4f}'.format(metric[t]['hit1'].item()))
-            print(f'Validation/hithit3_{direction}', '{:.4f}'.format(metric[t]['hit3'].item()))
-            print(f'Validation/hit10_{direction}', '{:.4f}'.format(metric[t]['hit10'].item()))
+            print(f'Validation/MRR_forward_{direction}', '{:.5f}'.format(metric[t]['MRR'].item()))
+            print(f'Validation/hit1_{direction}', '{:.5f}'.format(metric[t]['hit1'].item()))
+            print(f'Validation/hithit3_{direction}', '{:.5f}'.format(metric[t]['hit3'].item()))
+            print(f'Validation/hit10_{direction}', '{:.5f}'.format(metric[t]['hit10'].item()))
     elif select_print in ['fig_architecture', 'fig_illustration', 'fig_result', 'table_result', 'table_parameter']:
         print('all')
-        print(f'Validation/MRR_forward_{direction}','{:.4f}'.format(MRR.item()))
-        print(f'Validation/hit1_{direction}','{:.4f}'.format(hit1.item()))
-        print(f'Validation/hithit3_{direction}','{:.4f}'.format(hit3.item()))
-        print(f'Validation/hit10_{direction}', '{:.4f}'.format(hit10.item()))
+        print(f'Validation/MRR_forward_{direction}','{:.5f}'.format(MRR.item()))
+        print(f'Validation/hit1_{direction}','{:.5f}'.format(hit1.item()))
+        print(f'Validation/hithit3_{direction}','{:.5f}'.format(hit3.item()))
+        print(f'Validation/hit10_{direction}', '{:.5f}'.format(hit10.item()))
         for t in metric:
             if t == select_print:
                 print(f"{t}")
-                print(f'Validation/MRR_forward_{direction}', '{:.4f}'.format(metric[t]['MRR'].item()))
-                print(f'Validation/hit1_{direction}', '{:.4f}'.format(metric[t]['hit1'].item()))
-                print(f'Validation/hithit3_{direction}', '{:.4f}'.format(metric[t]['hit3'].item()))
-                print(f'Validation/hit10_{direction}', '{:.4f}'.format(metric[t]['hit10'].item()))
+                print(f'Validation/MRR_forward_{direction}', '{:.5f}'.format(metric[t]['MRR'].item()))
+                print(f'Validation/hit1_{direction}', '{:.5f}'.format(metric[t]['hit1'].item()))
+                print(f'Validation/hithit3_{direction}', '{:.5f}'.format(metric[t]['hit3'].item()))
+                print(f'Validation/hit10_{direction}', '{:.5f}'.format(metric[t]['hit10'].item()))
     elif select_print == 'only_overall':
         print('all')
-        print(f'Validation/MRR_forward_{direction}','{:.4f}'.format(MRR.item()))
-        print(f'Validation/hit1_{direction}','{:.4f}'.format(hit1.item()))
-        print(f'Validation/hithit3_{direction}','{:.4f}'.format(hit3.item()))
-        print(f'Validation/hit10_{direction}', '{:.4f}'.format(hit10.item()))
-    #if select_print don't in these keywords, we don't print results
+        print(f'Validation/MRR_forward_{direction}','{:.5f}'.format(MRR.item()))
+        print(f'Validation/hit1_{direction}','{:.5f}'.format(hit1.item()))
+        print(f'Validation/hithit3_{direction}','{:.5f}'.format(hit3.item()))
+        print(f'Validation/hit10_{direction}', '{:.5f}'.format(hit10.item()))
 
     if image_type == 'overall':
         return MRR, hit1, hit3, hit10
@@ -114,7 +113,7 @@ def cal_rank(score, index_y):
 class MMIR_LLMs(pl.LightningModule):
     def __init__(self, config):
         super(MMIR_LLMs, self).__init__()
-        # self.eval_model=SciMMIR_eval()
+        self.eval_model=SciMMIR_eval()
         self.config = config
         self.candidates_image_features = None
         self.candidates_text_features = None
@@ -125,9 +124,7 @@ class MMIR_LLMs(pl.LightningModule):
         self.pdist = nn.PairwiseDistance(p=2)
 
         self.sigmoid = torch.nn.Sigmoid() 
-        # self.softmax = torch.nn.Softmax(dim=1)
         self.BCE = torch.nn.BCELoss()
-        # self.MSE = nn.MSELoss()
 
         self.all_nodes_features = None
         self.MRR = []
@@ -137,14 +134,11 @@ class MMIR_LLMs(pl.LightningModule):
         Text_num = inputs['Text_num']
         Image_type = inputs['Image_type']
                 
-        # fig_features = candidates_image_features
         if self.config.score_method == 'Matrix Dot Product':
             query_features = self.candidates_text_features[Text_num]
             fig_features = self.candidates_image_features[Fig_num]
             score_forward = torch.matmul(query_features, self.candidates_image_features.transpose(0, 1))
-            # self.candidates_text_features = self.Linear_text(self.candidates_text_features)
             score_inverse = torch.matmul(fig_features, self.candidates_text_features.transpose(0, 1))
-            # score_inverse = torch.matmul(fig_features, candidates_text_features.transpose(0, 1))
         targets_forward = Fig_num
         targets_inverse = Text_num
         return (score_forward, score_inverse, targets_forward, targets_inverse, Image_type)
@@ -168,8 +162,6 @@ class MMIR_LLMs(pl.LightningModule):
 
         score_forward, score_inverse, index_y_forward, index_y_inverse, image_type = self(batch)
 
-        # target_rank_forward,_ = self.eval_model.cal_rank(score_forward, index_y_forward)#todo ranking_forward is necessary?
-        # target_rank_inverse,_ = self.eval_model.cal_rank(score_inverse, index_y_inverse)
         target_rank_forward, ranking_forward = cal_rank(score_forward, index_y_forward)
         target_rank_inverse, ranking_inverse = cal_rank(score_inverse, index_y_inverse)
 
@@ -178,16 +170,12 @@ class MMIR_LLMs(pl.LightningModule):
         self.image_type.append(image_type)
 
     def on_test_epoch_end(self):
-        # MRR, hit1, hit3, hit10 = self.eval_model.cal_metric(self.target_rank_forward, self.image_type, self.config.image_type)
-        # self.eval_model.print_metric(self.target_rank_forward, self.image_type,direction='forward',select_print=self.config.select_print)
         MRR, hit1, hit3, hit10 = cal_metric(self.target_rank_forward, self.image_type, self.config.image_type, 'forward', self.config.select_print)
 
         self.candidates_image_features = None
         self.target_rank_forward = []
         self.log('Validation/MRR_forward', MRR, prog_bar=True)
 
-        # MRR, hit1, hit3, hit10 = self.eval_model.cal_metric(self.target_rank_inverse, self.image_type, self.config.image_type)
-        # self.eval_model.print_metric(self.target_rank_forward, self.image_type,direction='inverse',select_print=self.config.select_print)
         MRR, hit1, hit3, hit10 = cal_metric(self.target_rank_inverse, self.image_type, self.config.image_type, 'inverse', self.config.select_print)
 
         self.target_rank_inverse = []

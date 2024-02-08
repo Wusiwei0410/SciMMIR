@@ -40,6 +40,9 @@ if __name__ == '__main__':
     
     if os.path.exists('./data/') == False:
         os.mkdir('./data/')
+    
+    #if os.path.exists('./data/training_samples_image_type.json') == False:
+    #    os.mkdir('./data/training_samples_image_type.json')
 
     for line in tqdm(ds_remote['train']):
         selected_training_samples_index[line['class']][len(selected_training_samples_index[line['class']])] = count

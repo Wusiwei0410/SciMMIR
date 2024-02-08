@@ -3,9 +3,8 @@ import torch
 import clip
 from PIL import Image
 from tqdm import tqdm
-from lavis.models import load_model_and_preprocess
 import os
-from transformers import BlipProcessor
+from transformers import BlipProcessor, Blip2Processor
 import argparse
 import datasets
 
@@ -31,7 +30,7 @@ def process_fig(data, save_path, preprocess, model_name):
     for line in tqdm(data):
         if model_name == 'CLIP':
             image = preprocess(line['image']).unsqueeze(0)
-        elif model_name == 'BLIP':
+        elif model_name in ['BLIP', 'BLIP-FLAN-T5-XL', 'BLIP-FLAN-T5-XXL']:
             image =  preprocess( images = line['image'], return_tensors="pt").pixel_values
         image_preprocess_data.append(image.cpu())
 
@@ -60,8 +59,11 @@ def run(args):
         model, preprocess = clip.load("ViT-B/32", device=device)
     elif args.model_name == 'BLIP':
         preprocess = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base", size = args.image_size)
-    # saved_data_path = "/ML-A100/team/mm/xw/MMIR_dataset/processed_data/"
-    ds_remote = datasets.load_dataset("yizhilll/SciMMIR_dataset" )
+    elif args.model_name == 'BLIP-FLAN-T5-XL':
+        preprocess = Blip2Processor.from_pretrained("Salesforce/blip2-flan-t5-xl", size = args.image_size)
+    elif args.model_name == 'BLIP-FLAN-T5-XXL':
+        preprocess = Blip2Processor.from_pretrained("Salesforce/blip2-flan-t5-xxl", size = args.image_size)
+    ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
 
     if os.path.exists(args.save_path) == False:
         os.mkdir(args.save_path)

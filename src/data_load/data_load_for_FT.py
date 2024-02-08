@@ -13,6 +13,7 @@ import random
 import csv
 from torch.utils.data.dataset import Dataset
 from dataclasses import dataclass
+# from transformers import BertTokenizer , BertModel
 import torch
 import logging
 import copy
@@ -60,7 +61,7 @@ class SciMMIR_FT_Dataset(Dataset):
 
         ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
         if mode == 'train':
-            self.examples = ds_remote['train']
+            self.examples = ds_remote['train']#.select(range(100))
             self.examples = self.examples
 
             if self.config.image_type != 'overall':
@@ -96,12 +97,12 @@ class SciMMIR_FT_Dataset(Dataset):
             if self.config.model_name == 'CLIP':
                 Q_token = self.tokenizer(Query, context_length=self.context_length, truncate = True)
                 Q_token = Q_token.squeeze(1)
-            elif self.config.model_name == 'BLIP' or self.config.model_name == 'BLIP-large':
+            elif self.config.model_name == 'BLIP' or self.config.model_name == 'BLIP-large' or self.config.model_name == 'BLIP-FLAN-T5-XL' or self.config.model_name == 'BLIP-FLAN-T5-XXL':
                 Q_token = self.preprocess(text = Query, add_special_tokens=True,padding='max_length', truncation=True, max_length = self.context_length, return_tensors = 'pt')
 
         if self.config.model_name == 'CLIP':
             Fig_preprocess = self.preprocess(Fig).unsqueeze(0)
-        elif self.config.model_name == 'BLIP' or self.config.model_name == 'BLIP-large':
+        elif self.config.model_name == 'BLIP' or self.config.model_name == 'BLIP-large' or self.config.model_name == 'BLIP-FLAN-T5-XL' or self.config.model_name == 'BLIP-FLAN-T5-XXL':
             Fig_preprocess = self.preprocess( images = Fig, return_tensors="pt").pixel_values.squeeze(0)#, dtype=torch.float16
 
         if self.mode == 'train':
