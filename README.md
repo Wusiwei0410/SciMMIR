@@ -71,16 +71,28 @@ You can use following codes to get fine-tuned CLIP+BERT model:
  python train_main.py --training_data_len 498279 --Use_BERT 1 --train_batch_size 200
 ```
 
-You can use following codes to  get fine-tuned BLIP-base model:
+You can use following codes to get fine-tuned BLIP-base model:
 
 ```
 python train_main.py --training_data_len 498279 --model_name BLIP --train_batch_size 110 --context_length 128 --image_size 384
 ```
 
-You can use following codes to  get fine-tuned BLIP-BERT model:
+You can use following codes to get fine-tuned BLIP-BERT model:
 
 ```
 python train_main.py --training_data_len 498279 --model_name BLIP --train_batch_size 110 --context_length 128 --image_size 384 --Use_BERT 1
+```
+
+You can use following codes to get fine-tuned BLIP2_FLAN_T5_XL:
+
+```
+python train_main.py --training_data_len 498279 --model_name BLIP-FLAN-T5-XL --train_batch_size 20 --context_length 128 --image_size 384 --text_process_num 1000  --figure_process_num 400 --max_epochs 5 > BLIP_FLAN_T5_epoch5_log.txt  2>&1 & 
+```
+
+If you want to training model use mutiple gpus, you can  setting the gpus by multi_gpus :
+
+```
+python train_main.py --training_data_len 498279 --model_name BLIP-FLAN-T5-XL --train_batch_size 20 --context_length 128 --image_size 384 --text_process_num 1000 --figure_process_num 400 --max_epochs 5 --multi_gpus 2 > BLIP_FLAN_T5_epoch5_log.txt 2>&1 & 
 ```
 
 ### Using  the subcategories training data
@@ -110,6 +122,15 @@ python LLMs_Embedding.py --model_name 'fuyu-8b'
 ```
 
 and you can change the model_name to use different VLMs.
+
+Specifically, as for  LLaMA-Adapter2-7B,  you need to create  a  independent envirnment to run the LLMs_Embedding.py to get the  embeddings:
+
+```
+cd ./src/LLM_models/Mymplug_owl2/
+create -n mPLUG-Owl2-LLaMA2-7B python=3.8.0
+conda activate mPLUG-Owl2-LLaMA2-7B
+pip install -e.
+```
 
 Then you can test the text and image embedding in our SciMMIR benchmark by using following codes:
 

@@ -6,3 +6,4 @@ ftfy
 regex
 tqdm
 sentencepiece
+git+https://github.com/openai/CLIP.git
