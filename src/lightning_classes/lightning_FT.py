@@ -153,6 +153,7 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
             if model_name == 'CLIP':
                 candidates_text_features.append(model.encode_text(text_token_itme.cuda()))
             text_token_itme = text_token_itme.cpu()
+        torch.cuda.empty_cache()
     candidates_text_features = torch.cat(candidates_text_features, dim = 0)
     torch.cuda.empty_cache()
 
@@ -169,6 +170,7 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
                 fig_feature = model.get_image_features(pixel_values = figure_process_mat_part.cuda())
                 fig_feature = fig_feature.mean(dim=1)
                 candidates_image_features.append(fig_feature)
+        torch.cuda.empty_cache()
     figure_process_mat_part = figure_process_mat_part.cpu()
     candidates_image_features = torch.cat(candidates_image_features, dim = 0)
     torch.cuda.empty_cache()
