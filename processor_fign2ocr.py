@@ -14,7 +14,7 @@ def json_save(data, path):
     json.dump(data, f)
     f.close()
 
-file_jsonl_path = "/home/yizhi/ocr_result_test.jsonl"
+file_jsonl_path = "./data/ocr_result_test.jsonl"
 
 data_raw = []
 fign2ocr_dic = {}
