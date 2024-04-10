@@ -29,4 +29,4 @@ with open(file_jsonl_path) as file:
 print(len(data_raw))
 print(len(fign2ocr_dic))
 
-json_save(fign2ocr_dic, './data/fign2ocr_dic')
+json_save(fign2ocr_dic, './data/fign2ocr_dic.json')
