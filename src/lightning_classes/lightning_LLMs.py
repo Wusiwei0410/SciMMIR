@@ -13,7 +13,6 @@ import torch
 from transformers import AdamW, get_linear_schedule_with_warmup
 import torch.nn as nn
 import torch.nn.functional as F
-from .lightning_evaluate import SciMMIR_eval
 
 def load_json(path):
     f = open(path, 'r')
