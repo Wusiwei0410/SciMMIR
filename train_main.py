@@ -124,6 +124,7 @@ if __name__ == '__main__':
     # parser.add_argument("--image_type" , type = str , default = 'table_parameter')
     
     parser.add_argument("--multi_gpus" , type = int , default = False)
+    parser.add_argument("--use_ocr" , type = int , default = False)
     #parser.add_argument("--ckpt_path" , type = str , default = '')
     parser.add_argument("--select_print" , type = str , default = 'print_all_setting')
     parser.add_argument("--score_method" , type = str , default = 'Matrix Dot Product')
@@ -156,7 +157,8 @@ if __name__ == '__main__':
     parser.add_argument("--result_save_path", type=str, default="./data/result/")
     parser.add_argument("--num_warmup_steps", type=int, default= floor(floor(parser.parse_args().training_data_len / parser.parse_args().train_batch_size) * parser.parse_args().max_epochs / 10))
     parser.add_argument("--num_training_steps", type=int, default=floor(parser.parse_args().training_data_len / parser.parse_args().train_batch_size) * parser.parse_args().max_epochs)#12020
-
+    parser.add_argument("--fign2ocr", type=str, default= './data/fign2ocr_dic.json')
+    
     parser.add_argument("--text_2_image_index_valid", type=str, default=f"{parser.parse_args().model_name}_torch_data_valid/text_2_image_index.json")
     parser.add_argument("--text_2_image_index_test", type=str, default=f"{parser.parse_args().model_name}_torch_data_test/text_2_image_index.json")
     parser.add_argument("--figure_process_mat_path_valid", type=str, default=f"{parser.parse_args().model_name}_torch_data_valid/")
