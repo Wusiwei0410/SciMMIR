@@ -37,6 +37,16 @@ image = test_data[0]['image']
 
 ## Fine-Tuning Model on SciMMIR Dataset
 
+### Ocr Data
+
+Please download Ocr data of images through the [google driven](https://drive.google.com/file/d/10oP4uTvOsYMJt5wLroheF3mt4uzGfZMB/view?usp=drive_link) and put it in the ./data folder. we will update the ocr data to hugging face datset as soon as possible.
+
+Then get the fig_name2ocr dic by funing the following code:
+
+```python
+python processor_fign2ocr.py
+```
+
 ### Processing data
 
 First, we need to get the subcategories information about our dataset by runing the following code:
