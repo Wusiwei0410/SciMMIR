@@ -116,9 +116,11 @@ def cal_rank(score, index_y):
 
     return target_rank, index
 
-def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_path, figure_process_mat_path, figure_process_mat_num, language_model = None, model = None, linear_layer = None, text_process_num = 1000, figure_process_num = 100):
+def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_path, figure_process_mat_path, figure_process_mat_num, use_ocr = False, language_model = None, model = None, linear_layer = None, text_process_num = 1000, figure_process_num = 100):
     candidates_image_features = []
     candidates_text_features = []
+    candidates_ocr_features = []
+
     if Use_BERT == True:
         input_ids = torch.load(f'{datasets_saved_path + text_process_mat_path}input_ids.pt')
         attention_mask = torch.load(f'{datasets_saved_path + text_process_mat_path}attention_mask.pt')
@@ -129,8 +131,9 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
         batch_size = input_ids.size(0)
     elif model_name == 'CLIP':
         text_token = torch.load(f'{datasets_saved_path + text_process_mat_path}text_mat.pt')
+        ocr_token = torch.load(f'{datasets_saved_path + text_process_mat_path}ocr_text_mat.pt')
         batch_size = text_token.size(0)
-
+     
     for i in range(0, batch_size, text_process_num):
         if Use_BERT == True or model_name == 'BLIP' or model_name == 'BLIP-large' or model_name == 'BLIP-FLAN-T5-XL' or model_name == 'BLIP-FLAN-T5-XXL':
             input_ids_item = input_ids[i : i + text_process_num].cuda()
@@ -150,11 +153,19 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
             attention_mask_item = attention_mask_item.cpu()
         else:
             text_token_itme = text_token[i : i + text_process_num].cuda()
+            ocr_token_itme = ocr_token[i : i + text_process_num].cuda()
             if model_name == 'CLIP':
                 candidates_text_features.append(model.encode_text(text_token_itme.cuda()))
+                candidates_ocr_features.append(model.encode_text(ocr_token_itme.cuda()))
             text_token_itme = text_token_itme.cpu()
+            ocr_token_itme = ocr_token_itme.cpu()
         torch.cuda.empty_cache()
     candidates_text_features = torch.cat(candidates_text_features, dim = 0)
+    if use_ocr == True:
+        candidates_ocr_features.append(model.encode_text(ocr_token_itme.cuda()))
+    else:
+        candidates_ocr_features == None
+
     torch.cuda.empty_cache()
 
     for i in range(0, figure_process_mat_num):
@@ -175,7 +186,7 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
     candidates_image_features = torch.cat(candidates_image_features, dim = 0)
     torch.cuda.empty_cache()
 
-    return candidates_text_features, candidates_image_features
+    return candidates_text_features, candidates_image_features, candidates_ocr_features
 
 class SciMMIR_FT(pl.LightningModule):
     def __init__(self, config, model, BERT_model = None):
@@ -219,6 +230,7 @@ class SciMMIR_FT(pl.LightningModule):
         Fig_num = inputs['Fig_num']
         Text_num = inputs['Text_num']
         Image_type = inputs['Image_type']
+        Ocr_token = inputs['Ocr_token']
 
         if self.config.Use_BERT == True:
             Q_token['input_ids'] = Q_token['input_ids'].squeeze(1)
@@ -230,6 +242,8 @@ class SciMMIR_FT(pl.LightningModule):
         else:
             if self.config.model_name == 'CLIP':
                 query_features = self.model.encode_text(Q_token.squeeze(1))
+                if self.config.use_ocr == True:
+                    ocr_features = self.model.encode_text(Ocr_token.squeeze(1))
             elif self.config.model_name == 'BLIP' or self.config.model_name == 'BLIP-large':
                 Q_token['input_ids'] = Q_token['input_ids'].squeeze(1)
                 Q_token['attention_mask'] = Q_token['attention_mask'].squeeze(1)
@@ -251,6 +265,10 @@ class SciMMIR_FT(pl.LightningModule):
         elif self.config.model_name == 'BLIP-FLAN-T5-XL' or self.config.model_name == 'BLIP-FLAN-T5-XXL':
             fig_features = self.model.get_image_features(pixel_values = Fig_preprocess)
             fig_features = fig_features.mean(dim=1)
+        
+        if self.config.use_ocr == True:
+            fig_features = (fig_features + ocr_features) / 2
+
         if self.candidates_image_features == None or self.candidates_text_features == None:
             score_forward = torch.matmul(query_features, fig_features.transpose(0, 1))
             targets_forward = torch.eye(score_forward.size(0)).cuda()
@@ -286,7 +304,8 @@ class SciMMIR_FT(pl.LightningModule):
                 self.BERT = self.BERT.eval()
             
             with torch.no_grad():
-                candidates_text_features, candidates_image_features = get_embedding(
+                candidates_text_features, candidates_image_features, candidates_ocr_features = get_embedding(
+                    use_ocr = self.config.use_ocr,
                     Use_BERT = self.config.Use_BERT, 
                     model_name = self.config.model_name, 
                     datasets_saved_path = self.config.datasets_saved_path, 
@@ -301,6 +320,10 @@ class SciMMIR_FT(pl.LightningModule):
                 )
                 self.candidates_text_features = candidates_text_features
                 self.candidates_image_features = candidates_image_features 
+
+                if self.config.use_ocr == True:
+                    self.candidates_image_features = (candidates_image_features + candidates_ocr_features) / 2
+
 
         score_forward, score_inverse, index_y_forward, index_y_inverse, image_type = self(batch)
         target_rank_forward, ranking_forward = cal_rank(score_forward, index_y_forward)
@@ -338,7 +361,8 @@ class SciMMIR_FT(pl.LightningModule):
                 self.BERT = self.BERT.eval()
             
             with torch.no_grad():
-                candidates_text_features, candidates_image_features = get_embedding(
+                candidates_text_features, candidates_image_features, candidates_ocr_features = get_embedding(
+                    use_ocr = self.config.use_ocr,
                     Use_BERT = self.config.Use_BERT, 
                     model_name = self.config.model_name, 
                     datasets_saved_path = self.config.datasets_saved_path, 
@@ -353,6 +377,8 @@ class SciMMIR_FT(pl.LightningModule):
                 )
                 self.candidates_text_features = candidates_text_features
                 self.candidates_image_features = candidates_image_features 
+                if self.config.use_ocr == True:
+                    self.candidates_image_features = (candidates_image_features + candidates_ocr_features) / 2
 
         score_forward, score_inverse, index_y_forward, index_y_inverse, image_type = self(batch)
         target_rank_forward, ranking_forward = cal_rank(score_forward, index_y_forward)
