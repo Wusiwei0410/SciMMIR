@@ -63,7 +63,7 @@ class SciMMIR_FT_Dataset(Dataset):
 
         ds_remote = datasets.load_dataset("m-a-p/SciMMIR" )
         if mode == 'train':
-            self.examples = ds_remote['train'].select(range(100))
+            self.examples = ds_remote['train']#.select(range(100))
             self.examples = self.examples
 
             if self.config.image_type != 'overall':
