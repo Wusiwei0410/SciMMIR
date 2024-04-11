@@ -162,7 +162,7 @@ def get_embedding(Use_BERT, model_name, datasets_saved_path, text_process_mat_pa
         torch.cuda.empty_cache()
     candidates_text_features = torch.cat(candidates_text_features, dim = 0)
     if use_ocr == True:
-        candidates_ocr_features.append(model.encode_text(ocr_token_itme.cuda()))
+        candidates_ocr_features = torch.cat(candidates_ocr_features, dim = 0)
     else:
         candidates_ocr_features == None
 
