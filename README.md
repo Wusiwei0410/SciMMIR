@@ -13,10 +13,23 @@ It is worth mentioning that we define a data hierarchical architecture of "Two s
 <div align="center">
 <img src=./imgs/data_architecture.png width=50% />
 </div>
+Furthermore, we collected the domain information of our SciMMIR benchmark (as shown in the table below).
 
-As shown in the table below, we conducted extensive baselines (both fine-tuning and zero-shot) within various subsets and subcategories.
+<div align="center">
+<img src=./imgs/domain_statics.png width=50% />
+</div>
+
+We conducted extensive baselines (both fine-tuning and zero-shot) within various subsets and subcategories.
+
+As shown in the table below, in the [arxiv version](https://arxiv.org/abs/2401.13478), we evaluate those VLMs regard the samples in testing split as candidates in our MMIR task.
 
 ![main_result](./imgs/main_result.png)
+
+Then, as shown in the table below, we rerun the experiments regarding all the samples in test, valid and train split as candidates. And the results are relatively lower than the results presented in the arxiv version.
+
+![main_result](./imgs/main_result_ACL.png)
+
+**Please Note: The codes relased in the repo regard all the samples in the test, valid and train split as candidates. If you want to evaluate your VLMs using our codes, please compared with the latest results (where, as for the fine-tuned BLIP-base+BERT model, its MRR results are only 11.15 and 12.69 in the two directions for the ALL setting).**
 
 For more detailed experimental results and analysis, please refer to our paper [SciMMIR](https://arxiv.org/abs/2401.13478).
 
