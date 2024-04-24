@@ -16,7 +16,7 @@ It is worth mentioning that we define a data hierarchical architecture of "Two s
 Furthermore, we collected the domain information of our SciMMIR benchmark (as shown in the table below).
 
 <div align="center">
-<img src=./imgs/domain_statics.png width=50% />
+<img src=./imgs/domain_statics.png width=40% />
 </div>
 
 We conducted extensive baselines (both fine-tuning and zero-shot) within various subsets and subcategories.
