@@ -50,6 +50,8 @@ def cal_metric(target_rank, target_types, image_type, direction, select_print = 
     hit10 = hit10 / count
 
     metric = {}
+    metric['figure'] = {'count':0, 'MRR':0, 'hit1':0, 'hit3': 0, 'hit10': 0}
+    metric['table'] = {'count':0, 'MRR':0, 'hit1':0, 'hit3': 0, 'hit10': 0}
     for t in ['fig_architecture', 'fig_illustration', 'fig_result', 'table_result', 'table_parameter']:
         metric[t] = {'count':0, 'MRR':0, 'hit1':0, 'hit3': 0, 'hit10': 0}
         for items, items_type in zip(target_rank, target_types):
@@ -64,40 +66,75 @@ def cal_metric(target_rank, target_types, image_type, direction, select_print = 
                             metric[t]['hit3'] += (item <= k)
                         if k == 10:
                             metric[t]['hit10'] += (item <= k)
+                    
+                    figure_type = None
+                    if 'fig_' in item_type:
+                        figure_type = 'figure'
+                    elif 'table_' in item_type:
+                        figure_type = 'table'
+                    
+                    metric[figure_type]['count'] += 1
+                    metric[figure_type]['MRR'] += (1 / item)
+                    for k in [1,3,10]:
+                        if k == 1:
+                            metric[figure_type]['hit1'] += (item <= k)
+                        if k == 3:
+                            metric[figure_type]['hit3'] += (item <= k)
+                        if k == 10:
+                            metric[figure_type]['hit10'] += (item <= k)
         metric[t]['MRR'] = metric[t]['MRR'] / metric[t]['count']
         metric[t]['hit1'] = metric[t]['hit1'] / metric[t]['count']
         metric[t]['hit3'] = metric[t]['hit3'] / metric[t]['count']
         metric[t]['hit10'] = metric[t]['hit10'] / metric[t]['count']
 
+        for figre_type in ['figure', 'table']:
+            metric[figre_type]['MRR'] = metric[figre_type]['MRR'] / metric[figre_type]['count']
+            metric[figre_type]['hit1'] = metric[figre_type]['hit1'] / metric[figre_type]['count']
+            metric[figre_type]['hit3'] = metric[figre_type]['hit3'] / metric[figre_type]['count']
+            metric[figre_type]['hit10'] = metric[figre_type]['hit10'] / metric[figre_type]['count']
+            
+    
     if select_print == 'print_all_setting':
         print('all')
-        print(f'Validation/MRR_forward_{direction}','{:.5f}'.format(MRR.item()))
+        print(f'Validation/MRR_{direction}','{:.5f}'.format(MRR.item()))
         print(f'Validation/hit1_{direction}','{:.5f}'.format(hit1.item()))
         print(f'Validation/hithit3_{direction}','{:.5f}'.format(hit3.item()))
         print(f'Validation/hit10_{direction}', '{:.5f}'.format(hit10.item()))
 
+        print('Figure')
+        print(f'Validation/MRR_{direction}', '{:.5f}'.format(metric['figure']['MRR'].item()))
+        print(f'Validation/hit1_{direction}', '{:.5f}'.format(metric['figure']['hit1'].item()))
+        print(f'Validation/hithit3_{direction}', '{:.5f}'.format(metric['figure']['hit3'].item()))
+        print(f'Validation/hit10_{direction}', '{:.5f}'.format(metric['figure']['hit10'].item()))
+
+        print('Table')
+        print(f'Validation/MRR_{direction}', '{:.5f}'.format(metric['table']['MRR'].item()))
+        print(f'Validation/hit1_{direction}', '{:.5f}'.format(metric['table']['hit1'].item()))
+        print(f'Validation/hithit3_{direction}', '{:.5f}'.format(metric['table']['hit3'].item()))
+        print(f'Validation/hit10_{direction}', '{:.5f}'.format(metric['table']['hit10'].item()))
+
         for t in metric:
             print(f"{t}")
-            print(f'Validation/MRR_forward_{direction}', '{:.5f}'.format(metric[t]['MRR'].item()))
+            print(f'Validation/MRR_{direction}', '{:.5f}'.format(metric[t]['MRR'].item()))
             print(f'Validation/hit1_{direction}', '{:.5f}'.format(metric[t]['hit1'].item()))
             print(f'Validation/hithit3_{direction}', '{:.5f}'.format(metric[t]['hit3'].item()))
             print(f'Validation/hit10_{direction}', '{:.5f}'.format(metric[t]['hit10'].item()))
     elif select_print in ['fig_architecture', 'fig_illustration', 'fig_result', 'table_result', 'table_parameter']:
         print('all')
-        print(f'Validation/MRR_forward_{direction}','{:.5f}'.format(MRR.item()))
+        print(f'Validation/MRR_{direction}','{:.5f}'.format(MRR.item()))
         print(f'Validation/hit1_{direction}','{:.5f}'.format(hit1.item()))
         print(f'Validation/hithit3_{direction}','{:.5f}'.format(hit3.item()))
         print(f'Validation/hit10_{direction}', '{:.5f}'.format(hit10.item()))
         for t in metric:
             if t == select_print:
                 print(f"{t}")
-                print(f'Validation/MRR_forward_{direction}', '{:.5f}'.format(metric[t]['MRR'].item()))
+                print(f'Validation/MRR_{direction}', '{:.5f}'.format(metric[t]['MRR'].item()))
                 print(f'Validation/hit1_{direction}', '{:.5f}'.format(metric[t]['hit1'].item()))
                 print(f'Validation/hithit3_{direction}', '{:.5f}'.format(metric[t]['hit3'].item()))
                 print(f'Validation/hit10_{direction}', '{:.5f}'.format(metric[t]['hit10'].item()))
     elif select_print == 'only_overall':
         print('all')
-        print(f'Validation/MRR_forward_{direction}','{:.5f}'.format(MRR.item()))
+        print(f'Validation/MRR_{direction}','{:.5f}'.format(MRR.item()))
         print(f'Validation/hit1_{direction}','{:.5f}'.format(hit1.item()))
         print(f'Validation/hithit3_{direction}','{:.5f}'.format(hit3.item()))
         print(f'Validation/hit10_{direction}', '{:.5f}'.format(hit10.item()))
