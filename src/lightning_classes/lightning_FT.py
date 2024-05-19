@@ -69,6 +69,7 @@ def cal_metric(target_rank, target_types, image_type, direction, select_print = 
                     
                     metric[figure_type]['count'] += 1
                     metric[figure_type]['MRR'] += (1 / item)
+                    
                     for k in [1,3,10]:
                         if k == 1:
                             metric[figure_type]['hit1'] += (item <= k)
@@ -76,6 +77,7 @@ def cal_metric(target_rank, target_types, image_type, direction, select_print = 
                             metric[figure_type]['hit3'] += (item <= k)
                         if k == 10:
                             metric[figure_type]['hit10'] += (item <= k)
+                            
         metric[t]['MRR'] = metric[t]['MRR'] / metric[t]['count']
         metric[t]['hit1'] = metric[t]['hit1'] / metric[t]['count']
         metric[t]['hit3'] = metric[t]['hit3'] / metric[t]['count']
@@ -86,8 +88,7 @@ def cal_metric(target_rank, target_types, image_type, direction, select_print = 
         metric[figre_type]['hit1'] = metric[figre_type]['hit1'] / metric[figre_type]['count']
         metric[figre_type]['hit3'] = metric[figre_type]['hit3'] / metric[figre_type]['count']
         metric[figre_type]['hit10'] = metric[figre_type]['hit10'] / metric[figre_type]['count']
-        
-    
+         
     if select_print == 'print_all_setting':
         print('all')
         print(f'Validation/MRR_{direction}','{:.5f}'.format(MRR.item()))
