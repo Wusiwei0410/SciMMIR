@@ -1,11 +1,5 @@
 #!/usr/bin/env python  
 # -*- coding:utf-8 -*-  
-""" 
-@author: Siwei Wu
-@file: lightning_datamodule_HRQuery.py 
-@time: 2022/08/10
-@contact: wusiwei@njust.edu.cn
-"""
 import logging
 import pytorch_lightning as pl
 import torch
