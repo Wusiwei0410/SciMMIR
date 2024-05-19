@@ -1,11 +1,5 @@
 #!/usr/bin/env python  
 # -*- coding:utf-8 -*-  
-""" 
-@author: Siwei Wu
-@file: lightning_HRQuery.py
-@time: 2022/08/10
-@contact: wusiwei@njust.edu.cn
-"""
 import copy
 import json
 import pytorch_lightning as pl
@@ -87,12 +81,12 @@ def cal_metric(target_rank, target_types, image_type, direction, select_print = 
         metric[t]['hit3'] = metric[t]['hit3'] / metric[t]['count']
         metric[t]['hit10'] = metric[t]['hit10'] / metric[t]['count']
 
-        for figre_type in ['figure', 'table']:
-            metric[figre_type]['MRR'] = metric[figre_type]['MRR'] / metric[figre_type]['count']
-            metric[figre_type]['hit1'] = metric[figre_type]['hit1'] / metric[figre_type]['count']
-            metric[figre_type]['hit3'] = metric[figre_type]['hit3'] / metric[figre_type]['count']
-            metric[figre_type]['hit10'] = metric[figre_type]['hit10'] / metric[figre_type]['count']
-            
+    for figre_type in ['figure', 'table']:
+        metric[figre_type]['MRR'] = metric[figre_type]['MRR'] / metric[figre_type]['count']
+        metric[figre_type]['hit1'] = metric[figre_type]['hit1'] / metric[figre_type]['count']
+        metric[figre_type]['hit3'] = metric[figre_type]['hit3'] / metric[figre_type]['count']
+        metric[figre_type]['hit10'] = metric[figre_type]['hit10'] / metric[figre_type]['count']
+        
     
     if select_print == 'print_all_setting':
         print('all')
