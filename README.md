@@ -184,13 +184,11 @@ You can just use the code of Large VLMs Zero-Shot Experiments. Firstly, you need
 ## Citation
 
 ```
-@misc{wu2024scimmir,
-      title={SciMMIR: Benchmarking Scientific Multi-modal Information Retrieval}, 
-      author={Siwei Wu and Yizhi Li and Kang Zhu and Ge Zhang and Yiming Liang and Kaijing Ma and Chenghao Xiao and Haoran Zhang and Bohao Yang and Wenhu Chen and Wenhao Huang and Noura Al Moubayed and Jie Fu and Chenghua Lin},
-      year={2024},
-      eprint={2401.13478},
-      archivePrefix={arXiv},
-      primaryClass={cs.IR}
+@article{wu2024scimmir,
+  title={SciMMIR: Benchmarking Scientific Multi-modal Information Retrieval},
+  author={Wu, Siwei and Li, Yizhi and Zhu, Kang and Zhang, Ge and Liang, Yiming and Ma, Kaijing and Xiao, Chenghao and Zhang, Haoran and Yang, Bohao and Chen, Wenhu and others},
+  journal={arXiv preprint arXiv:2401.13478},
+  year={2024}
 }
 ```
 
