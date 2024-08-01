@@ -173,21 +173,15 @@ If you want to quickly test your fine-tuned model in our SciMMIR benchmark and d
 
 You can just use the code of Large VLMs Zero-Shot Experiments. Firstly, you need to use your modes to get the image and text  embedding. Finally, runing the test_main_LLMs.py with changing the parameter --LLM_text_embedding_saved_path as your embedding saved path.
 
-## Potential TODOs before ACL
-
-**TODO**: case study table
-
-**TODO**: statistics of the paper fields (perhaps in appendix)
-
-**TODO**: See if it's possible to further divide the "Figure Results" subsets.
 
 ## Citation
 
 ```
-@article{wu2024scimmir,
+@inproceedings{wu2024scimmir,
   title={SciMMIR: Benchmarking Scientific Multi-modal Information Retrieval},
-  author={Wu, Siwei and Li, Yizhi and Zhu, Kang and Zhang, Ge and Liang, Yiming and Ma, Kaijing and Xiao, Chenghao and Zhang, Haoran and Yang, Bohao and Chen, Wenhu and others},
-  journal={arXiv preprint arXiv:2401.13478},
+  author={Wu, Siwei and Li, Yizhi and Zhu, Kang and Zhang, Ge and Liang, Yiming and Ma, Kaijing and Xiao, Chenghao and Zhang, Haoran and Yang, Bohao and Chen, Wenhu and  Huang, Wenhao and  Moubayed, Noura Al and  Fu, Jie and Lin, Chenghua},
+  booktitle    = {Proceedings of the 62nd Annual Meeting of the Association for Computational
+                  Linguistics (ACL), findings},
   year={2024}
 }
 ```
